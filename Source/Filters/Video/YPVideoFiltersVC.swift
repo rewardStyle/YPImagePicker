@@ -261,6 +261,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         guard let didSave = didSave else { return ypLog("Don't have saveCallback") }
 
         let resultVideo = YPMediaVideo(thumbnail: thumbnail, videoURL: videoUrl, asset: asset)
+        resultVideo.cropRect = inputVideo.cropRect
         didSave(YPMediaItem.video(v: resultVideo))
         setupRightBarButtonItem()
 

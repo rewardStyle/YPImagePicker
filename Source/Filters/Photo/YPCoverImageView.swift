@@ -10,7 +10,7 @@ import Photos
 
 public class YPCoverImageView: YPAdjustableView {
 
-    internal var coverImageView = UIImageView()
+    var coverImageView = UIImageView()
 
     var cropRect: CGRect?
     var asset: PHAsset?

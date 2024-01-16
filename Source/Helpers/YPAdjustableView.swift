@@ -15,22 +15,22 @@ public class YPAdjustableView: UIView {
         let assetSize = CGSize(width: CGFloat(asset.pixelWidth), height: CGFloat(asset.pixelHeight))
 
         if let aspectRatio = targetAspectRatio, aspectRatio != assetSize.width / assetSize.height {
-            adjustPlayerViewFrameForAspectRatio(cropRect: cropRect, aspectRatio: aspectRatio, assetSize: assetSize)
+            adjustViewFrameForAspectRatio(cropRect: cropRect, aspectRatio: aspectRatio, assetSize: assetSize)
         } else {
-            adjustPlayerViewFrame(cropRect: cropRect, assetSize: assetSize)
+            adjustViewFrame(cropRect: cropRect, assetSize: assetSize)
         }
     }
 
-    // Method to adjust the player view frame considering the asset's original size
-    private func adjustPlayerViewFrame(cropRect: CGRect, assetSize: CGSize) {
+    // Method to adjust the view frame considering the asset's original size
+    private func adjustViewFrame(cropRect: CGRect, assetSize: CGSize) {
         let assetRect = CGRect(origin: .zero, size: assetSize)
         let fitFrame = calculateAspectFitFrame(assetSize: assetSize)
         let targetFrame = calculateTargetFrame(cropRect: cropRect, assetRect: assetRect, fitFrame: fitFrame)
         updateViewFrameAction?(targetFrame)
     }
 
-    // Method to adjust the player view frame based on a target aspect ratio
-    private func adjustPlayerViewFrameForAspectRatio(cropRect: CGRect, aspectRatio: CGFloat, assetSize: CGSize) {
+    // Method to adjust the view frame based on a target aspect ratio
+    private func adjustViewFrameForAspectRatio(cropRect: CGRect, aspectRatio: CGFloat, assetSize: CGSize) {
         let adjustedAssetSize = adjustedSizeForAspectRatio(assetSize, aspectRatio: aspectRatio)
         let fitFrame = calculateAspectFitFrame(assetSize: adjustedAssetSize)
         let targetFrame = calculateTargetFrame(cropRect: cropRect, assetRect: CGRect(origin: .zero, size: adjustedAssetSize), fitFrame: fitFrame, adjustForAspectRatio: true)
