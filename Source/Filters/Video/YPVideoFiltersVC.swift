@@ -257,13 +257,12 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
     // MARK: - Actions
 
-    private func completeSave(thumbnail: UIImage, videoUrl: URL, asset: PHAsset?, startTime: CMTime?, endTime: CMTime?) {
+    private func completeSave(thumbnail: UIImage, videoUrl: URL, asset: PHAsset?, timeRange: CMTimeRange?) {
         guard let didSave = didSave else { return ypLog("Don't have saveCallback") }
 
         let resultVideo = YPMediaVideo(thumbnail: thumbnail, videoURL: videoUrl, asset: asset)
         resultVideo.cropRect = inputVideo.cropRect
-        resultVideo.startTime = startTime
-        resultVideo.endTime = endTime
+        resultVideo.timeRange = timeRange
         didSave(YPMediaItem.video(v: resultVideo))
         setupRightBarButtonItem()
 
@@ -294,9 +293,10 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         // if the view is in cover image selection mode, just pass the asset straight through because it's not transforming the asset in any way
         let startTime = trimmerView.startTime ?? CMTime.zero
         let endTime = trimmerView.endTime ?? inputAsset.duration
+        let timeRange = CMTimeRange(start: startTime, end: endTime)
         if vcType == .Cover {
             if let coverImage = self.coverImageView.image {
-                self.completeSave(thumbnail: coverImage, videoUrl: self.inputVideo.url, asset: self.inputVideo.asset, startTime: startTime, endTime: endTime)
+                self.completeSave(thumbnail: coverImage, videoUrl: self.inputVideo.url, asset: self.inputVideo.asset, timeRange: timeRange)
             } else {
                 ypLog("YPVideoFiltersVC -> Don't have coverImage.")
                 self.resetView()
@@ -330,7 +330,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             if untrimmed && !cropped && !rotated && !shouldMute {
                 // if video remains untrimmed and uncropped, use existing video url to eliminate video transcoding effort
                 // we will be selecting a cover image next, use generic uiimage for now
-                self.completeSave(thumbnail: self.coverImageView.image ?? UIImage(), videoUrl: self.inputVideo.url, asset: self.inputVideo.asset, startTime: startTime, endTime: endTime)
+                self.completeSave(thumbnail: self.coverImageView.image ?? UIImage(), videoUrl: self.inputVideo.url, asset: self.inputVideo.asset, timeRange: timeRange)
 
                 return
             }
@@ -341,7 +341,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             mediaManager.fetchVideoUrlAndCrop(for: inputVideo.asset!, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute) { [weak self] (url) in
                 DispatchQueue.main.async {
                     if let url = url {
-                        self?.completeSave(thumbnail: self?.coverImageView.image ?? UIImage(), videoUrl: url, asset: self?.inputVideo.asset, startTime: startTime, endTime: endTime)
+                        self?.completeSave(thumbnail: self?.coverImageView.image ?? UIImage(), videoUrl: url, asset: self?.inputVideo.asset, timeRange: timeRange)
                     } else {
                         ypLog("YPVideoFiltersVC -> Invalid asset url.")
                         self?.resetView()
