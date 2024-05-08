@@ -21,6 +21,14 @@ open class LibraryMediaManager {
         let session: AVAssetExportSession
     }
 
+    public struct ProcessedVideo {
+        public let assetIdentifier: String
+        public let fileUrl: URL
+        public let originalWidth: Int
+        public let originalHeight: Int
+        public let totalVideoDuration: TimeInterval
+    }
+
     weak var v: YPLibraryView?
     var collection: PHAssetCollection?
     internal var fetchResult: PHFetchResult<PHAsset>?
@@ -137,7 +145,7 @@ open class LibraryMediaManager {
     /// - Parameters:
     ///   - videoAsset: PHAsset which url is requested
     ///   - callback: Returns the AVAsset url for the PHAsset
-    func fetchVideoUrl(for videoAsset: PHAsset, callback: @escaping (_ videoURL: URL?) -> Void) {
+    func fetchVideoUrl(for videoAsset: PHAsset, callback: @escaping (_ video: ProcessedVideo?) -> Void) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
         videosOptions.deliveryMode = .highQualityFormat
@@ -148,7 +156,8 @@ open class LibraryMediaManager {
                 // pass the asset url through, no need to export
                 if let urlAsset = asset as? AVURLAsset {
                     DispatchQueue.main.async {
-                        callback(urlAsset.url)
+                        urlAsset.url
+                        callback(ProcessedVideo(assetIdentifier: videoAsset.localIdentifier, fileUrl: urlAsset.url, originalWidth: videoAsset.pixelWidth, originalHeight: videoAsset.pixelHeight, totalVideoDuration: videoAsset.duration))
                     }
                 } else { /// Some slow-mo videos break with `AVAssetExportPresetPassthrough` so use `AVAssetExportPresetHighestQuality` instead
                     let presetName = AVAssetExportPresetHighestQuality
@@ -162,7 +171,7 @@ open class LibraryMediaManager {
                                 switch session.status {
                                 case .completed:
                                     if let url = session.outputURL {
-                                        callback(url)
+                                        callback(ProcessedVideo(assetIdentifier: videoAsset.localIdentifier, fileUrl: url, originalWidth: videoAsset.pixelWidth, originalHeight: videoAsset.pixelHeight, totalVideoDuration: videoAsset.duration))
                                     } else {
                                         ypLog("LibraryMediaManager -> Don't have URL.")
                                         callback(nil)
@@ -187,38 +196,42 @@ open class LibraryMediaManager {
         }
     }
 
-    open func fetchVideoUrlAndCrop(for videoAsset: PHAsset, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, callback: @escaping (_ videoURL: URL?) -> Void) {
+    open func fetchVideoUrlAndCrop(for videoAsset: PHAsset, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, callback: @escaping (_ video: ProcessedVideo?) -> Void) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
         videosOptions.deliveryMode = .highQualityFormat
         let isSlowMoVideo = videoAsset.mediaSubtypes.contains(.videoHighFrameRate)
         imageManager?.requestAVAsset(forVideo: videoAsset, options: videosOptions) { asset, _, _ in
-                self.fetchVideoUrlAndCrop(for: asset, assetIdentifier: videoAsset.localIdentifier, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionTypeOverride, processingFailedRetryCount: processingFailedRetryCount, isSlowMoVideo: isSlowMoVideo, callback: callback)
+            guard let asset = asset else {
+                ypLog("⚠️ PHCachingImageManager >>> Don't have the asset")
+                callback(nil)
+                return
+            }
+            self.fetchVideoUrlAndCrop(for: asset, videoSize: CGSize(width: videoAsset.pixelWidth, height: videoAsset.pixelHeight), assetIdentifier: videoAsset.localIdentifier, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionTypeOverride, processingFailedRetryCount: processingFailedRetryCount, isSlowMoVideo: isSlowMoVideo, callback: callback)
         }
     }
 
-    open func fetchVideoUrlAndCrop(for videoUrl: URL, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, callback: @escaping (_ videoURL: URL?) -> Void) {
+    open func fetchVideoUrlAndCrop(for videoUrl: URL, videoSize: CGSize, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, callback: @escaping (_ video: ProcessedVideo?) -> Void) {
         let asset = AVAsset(url: videoUrl)
-        self.fetchVideoUrlAndCrop(for: asset, assetIdentifier: videoUrl.absoluteString, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionTypeOverride, processingFailedRetryCount: processingFailedRetryCount, isSlowMoVideo: false, callback: callback)
+        self.fetchVideoUrlAndCrop(for: asset, videoSize: videoSize, assetIdentifier: videoUrl.absoluteString, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionTypeOverride, processingFailedRetryCount: processingFailedRetryCount, isSlowMoVideo: false, callback: callback)
     }
 
-    private func fetchVideoUrlAndCrop(for videoAsset: AVAsset?, assetIdentifier: String, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, isSlowMoVideo: Bool = false, callback: @escaping (_ videoURL: URL?) -> Void) {
 
-        guard let asset = videoAsset else { ypLog("⚠️ PHCachingImageManager >>> Don't have the asset"); return }
+    private func fetchVideoUrlAndCrop(for videoAsset: AVAsset, videoSize: CGSize, assetIdentifier: String, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, isSlowMoVideo: Bool = false, callback: @escaping (_ video: ProcessedVideo?) -> Void) {
 
         let assetComposition = AVMutableComposition()
         let trackTimeRange = timeRange
 
         // 1. Inserting audio and video tracks in composition
 
-        guard let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first,
+        guard let videoTrack = videoAsset.tracks(withMediaType: AVMediaType.video).first,
               let videoCompositionTrack = assetComposition.addMutableTrack(withMediaType: .video,
                                                                            preferredTrackID: kCMPersistentTrackID_Invalid) else {
             ypLog("⚠️ PHCachingImageManager >>> Problems with video track")
             return
 
         }
-        if !shouldMute, let audioTrack = asset.tracks(withMediaType: AVMediaType.audio).first,
+        if !shouldMute, let audioTrack = videoAsset.tracks(withMediaType: AVMediaType.audio).first,
            let audioCompositionTrack = assetComposition.addMutableTrack(withMediaType: AVMediaType.audio,
                                                                         preferredTrackID: kCMPersistentTrackID_Invalid) {
             do {
@@ -273,7 +286,7 @@ open class LibraryMediaManager {
             mainInstructions.layerInstructions = [layerInstructions]
 
             // Video Composition
-            videoComposition = AVMutableVideoComposition(propertiesOf: asset)
+            videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
             videoComposition?.instructions = [mainInstructions]
             videoComposition?.renderSize = cropRect.size
             videoCompositionTrack.preferredTransform = videoTrack.preferredTransform
@@ -309,7 +322,9 @@ open class LibraryMediaManager {
                     switch session.status {
                     case .completed:
                         if let url = session.outputURL {
-                            callback(url)
+                            let totalSeconds = CMTimeGetSeconds(videoAsset.duration)
+                            TimeInterval(floatLiteral: totalSeconds)
+                            callback(ProcessedVideo(assetIdentifier: assetIdentifier, fileUrl: url, originalWidth: Int(videoSize.width), originalHeight: Int(videoSize.height), totalVideoDuration: totalSeconds))
                         } else {
                             ypLog("LibraryMediaManager -> Don't have URL.")
                             callback(nil)
@@ -324,7 +339,7 @@ open class LibraryMediaManager {
                             if retryCount > 1 {
                                 callback(nil)
                             } else {
-                                self.fetchVideoUrlAndCrop(for: asset, assetIdentifier: assetIdentifier, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionOverride, processingFailedRetryCount: retryCount, isSlowMoVideo: isSlowMoVideo, callback: callback)
+                                self.fetchVideoUrlAndCrop(for: videoAsset, videoSize: videoSize, assetIdentifier: assetIdentifier, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionOverride, processingFailedRetryCount: retryCount, isSlowMoVideo: isSlowMoVideo, callback: callback)
                             }
                         } else {
                             callback(nil)
