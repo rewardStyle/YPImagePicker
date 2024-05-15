@@ -372,7 +372,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                 mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
             } else {
                 // TODO: Need to solve the IG flow here.
-                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, videoSize: CGSize(width: 0, height: 0), cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
+                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
             }
 
             // set up notification listener
@@ -554,8 +554,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             if let videoAsset = inputVideo.asset {
                 mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, callback: callback)
             } else {
-                //IG FLOW NEED TO CONFIRM THIS BEHAVIOR
-                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, videoSize: CGSize(width: 0, height: 0), cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, callback: callback)
+                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, callback: callback)
             }
             return true
         } else {
