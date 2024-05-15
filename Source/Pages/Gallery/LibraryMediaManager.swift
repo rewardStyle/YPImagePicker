@@ -27,6 +27,14 @@ open class LibraryMediaManager {
         public let originalWidth: Int
         public let originalHeight: Int
         public let totalVideoDuration: TimeInterval
+
+        public init(assetIdentifier: String, fileUrl: URL, originalWidth: Int, originalHeight: Int, totalVideoDuration: TimeInterval) {
+            self.assetIdentifier = assetIdentifier
+            self.fileUrl = fileUrl
+            self.originalWidth = abs(originalWidth)
+            self.originalHeight = abs(originalHeight)
+            self.totalVideoDuration = totalVideoDuration
+        }
     }
 
     weak var v: YPLibraryView?
