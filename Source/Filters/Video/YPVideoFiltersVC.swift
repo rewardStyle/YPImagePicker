@@ -364,13 +364,13 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
             // cropping and trimming simultaneously to reduce total transcoding time
 
-            let callback: (_ video: ProcessedVideo?) -> Void = { [weak self] video in
+            let result: (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void = { [weak self] result in
                 DispatchQueue.main.async {
-                    if let video {
+                    switch result {
+                    case let .success(video):
                         self?.videoProcessingDelegate?.didCompleteVideoProcessing(processedVideo: video)
-
-                        self?.completeSave(thumbnail: self?.croppedImage ?? UIImage(), videoUrl: video.fileUrl, asset: self?.inputVideo.asset, timeRange: timeRange)
-                    } else {
+                        self?.completeSave(thumbnail: self?.croppedImage ?? UIImage(), videoUrl: video.videoUrl, asset: self?.inputVideo.asset, timeRange: timeRange)
+                    case let .failure(error):
                         ypLog("YPVideoFiltersVC -> Invalid asset url.")
                         self?.resetView()
                     }
@@ -379,10 +379,10 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
             if let videoAsset = inputVideo.asset {
                 videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: videoAsset.localIdentifier)
-                mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
+                mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, result: result)
             } else {
                 videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: inputVideo.url.absoluteString)
-                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
+                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, result: result)
             }
 
             // set up notification listener
