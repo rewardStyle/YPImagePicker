@@ -17,14 +17,14 @@ extension Notification.Name {
 
 public struct ProcessedVideo {
     public let assetIdentifier: String
-    public let fileUrl: URL
+    public let videoUrl: URL
     public let originalWidth: Int
     public let originalHeight: Int
     public let totalVideoDuration: TimeInterval
 
-    public init(assetIdentifier: String, fileUrl: URL, originalWidth: Int, originalHeight: Int, totalVideoDuration: TimeInterval) {
+    public init(assetIdentifier: String, videoUrl: URL, originalWidth: Int, originalHeight: Int, totalVideoDuration: TimeInterval) {
         self.assetIdentifier = assetIdentifier
-        self.fileUrl = fileUrl
+        self.videoUrl = videoUrl
         self.originalWidth = abs(originalWidth)
         self.originalHeight = abs(originalHeight)
         self.totalVideoDuration = totalVideoDuration.rounded()
@@ -37,6 +37,13 @@ public struct ProcessedVideo {
             "durationSeconds": String(totalVideoDuration)
         ]
     }
+}
+
+public enum LibraryMediaManagerError: Error {
+    case processingFailed(message: String)
+    case retryLimitReached(message: String)
+    case unknown(message: String)
+    case assetNotFound(message: String)
 }
 
 open class LibraryMediaManager {
