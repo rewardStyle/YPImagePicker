@@ -19,7 +19,7 @@ public enum YPVideoFiltersType {
 public protocol YPVideoProcessingDelegate: AnyObject {
     func willBeginVideoProcessing(assetIdentifier: String)
     func didCompleteVideoProcessing(processedVideo: ProcessedVideo)
-    func didFailVideoProcessing(assetIdentifier: String)
+    func didFailVideoProcessing(error: LibraryMediaManagerError)
 }
 
 open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
@@ -371,6 +371,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                         self?.videoProcessingDelegate?.didCompleteVideoProcessing(processedVideo: video)
                         self?.completeSave(thumbnail: self?.croppedImage ?? UIImage(), videoUrl: video.videoUrl, asset: self?.inputVideo.asset, timeRange: timeRange)
                     case let .failure(error):
+                        self?.videoProcessingDelegate?.didFailVideoProcessing(error: error)
                         ypLog("YPVideoFiltersVC -> Invalid asset url.")
                         self?.resetView()
                     }
@@ -547,23 +548,27 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
            startTime != coverTrimTimes?.startTime || endTime != coverTrimTimes?.endTime {
             let timerange = CMTimeRange(start: startTime, end: endTime)
 
-            let result: (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void = { [weak self] result in
+            let result: ProcessingResult = { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case let .success(video):
+                        self?.videoProcessingDelegate?.didCompleteVideoProcessing(processedVideo: video)
                         let trimmedAsset = AVAsset(url: video.videoUrl)
                         self?.setupGenerator(trimmedAsset)
                         self?.coverThumbSelectorView.asset = trimmedAsset
                         self?.coverTrimTimes = (startTime: startTime, endTime: endTime)
                         self?.generateCoverImageAtTime(startTime)
                     case let .failure(error):
+                        self?.videoProcessingDelegate?.didFailVideoProcessing(error: error)
                         ypLog("YPVideoFiltersVC -> Invalid asset url.")
                     }
                 }
             }
             if let videoAsset = inputVideo.asset {
+                videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: videoAsset.localIdentifier)
                 mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, result: result)
             } else {
+                videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: inputVideo.url.absoluteString)
                 mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, result: result)
             }
             return true

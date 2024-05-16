@@ -15,6 +15,12 @@ extension Notification.Name {
     public static var LibraryMediaManagerExportProgressUpdate: Notification.Name { return .init(rawValue: "\(namespace).LibraryMediaManagerExportProgressUpdate") }
 }
 
+extension AVAsset {
+    var totalSeconds: TimeInterval {
+        TimeInterval(floatLiteral: CMTimeGetSeconds(duration))
+    }
+}
+
 public struct ProcessedVideo {
     public let assetIdentifier: String
     public let videoUrl: URL
@@ -37,6 +43,7 @@ public enum LibraryMediaManagerError: Error {
     case processingFailed(message: String, assetId: String)
     case retryLimitReached(message: String, assetId: String)
     case unknown(message: String, assetId: String)
+    case processingCancelled(message: String, assetId: String)
     case assetNotFound(message: String, assetId: String)
 
     public var message: String {
@@ -44,7 +51,8 @@ public enum LibraryMediaManagerError: Error {
         case .unknown(message: let message, assetId: _), 
              .assetNotFound(message: let message, assetId: _),
              .processingFailed(message: let message, assetId: _),
-             .retryLimitReached(message: let message, assetId: _):
+             .retryLimitReached(message: let message, assetId: _),
+             .processingCancelled(message: let message, assetId: _):
             return message
         }
     }
@@ -54,7 +62,8 @@ public enum LibraryMediaManagerError: Error {
         case .unknown(message: _, assetId: let assetId),
              .assetNotFound(message: _, assetId: let assetId),
              .processingFailed(message: _, assetId: let assetId),
-             .retryLimitReached(message: _, assetId: let assetId):
+             .retryLimitReached(message: _, assetId: let assetId),
+             .processingCancelled(message: _, assetId: let assetId):
             return assetId
         }
     }
@@ -221,6 +230,11 @@ open class LibraryMediaManager {
                                     result(.failure(.processingFailed(message: "Video export failed with error: \(String(describing:session.error))", assetId: videoAsset.localIdentifier)))
                                 default:
                                     ypLog("LibraryMediaManager -> Export session completed with \(session.status) status. Not handling.")
+                                    if session.status == .cancelled {
+                                        result(.failure(.processingCancelled(message: "Export session has been cancelled with session status: \(session.status)", assetId: videoAsset.localIdentifier)))
+                                    } else {
+                                        result(.failure(.unknown(message: "Encountered unexpected failure in processing: \(session.status)", assetId: videoAsset.localIdentifier)))
+                                    }
                                 }
                             }
                         }
@@ -362,9 +376,7 @@ open class LibraryMediaManager {
                     switch session.status {
                     case .completed:
                         if let url = session.outputURL {
-                            let totalSeconds = CMTimeGetSeconds(videoAsset.duration)
-                            TimeInterval(floatLiteral: totalSeconds)
-                            result(.success(ProcessedVideo(assetIdentifier: assetIdentifier, videoUrl: url, originalWidth: Int(videoSize.width), originalHeight: Int(videoSize.height), totalVideoDuration: totalSeconds)))
+                            result(.success(ProcessedVideo(assetIdentifier: assetIdentifier, videoUrl: url, originalWidth: Int(videoSize.width), originalHeight: Int(videoSize.height), totalVideoDuration: videoAsset.totalSeconds)))
                         } else {
                             ypLog("LibraryMediaManager -> Don't have URL.")
                             result(.failure(.processingFailed(message: "The session output URL is missing.", assetId: assetIdentifier)))
@@ -386,6 +398,11 @@ open class LibraryMediaManager {
                         }
                     default:
                         ypLog("LibraryMediaManager -> Export session completed with \(session.status) status. Not handling.")
+                        if session.status == .cancelled {
+                            result(.failure(.processingCancelled(message: "Export session has been cancelled with session status: \(session.status)", assetId: assetIdentifier)))
+                        } else {
+                            result(.failure(.unknown(message: "Encountered unexpected failure in processing: \(session.status)", assetId: assetIdentifier)))
+                        }
                     }
                 }
             }
