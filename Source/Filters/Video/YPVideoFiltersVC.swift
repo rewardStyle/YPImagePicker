@@ -547,24 +547,24 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
            startTime != coverTrimTimes?.startTime || endTime != coverTrimTimes?.endTime {
             let timerange = CMTimeRange(start: startTime, end: endTime)
 
-            let callback: (_ video: ProcessedVideo?) -> Void = { [weak self] video in
+            let result: (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void = { [weak self] result in
                 DispatchQueue.main.async {
-                    if let video {
-                        let trimmedAsset = AVAsset(url: video.fileUrl)
+                    switch result {
+                    case let .success(video):
+                        let trimmedAsset = AVAsset(url: video.videoUrl)
                         self?.setupGenerator(trimmedAsset)
                         self?.coverThumbSelectorView.asset = trimmedAsset
                         self?.coverTrimTimes = (startTime: startTime, endTime: endTime)
                         self?.generateCoverImageAtTime(startTime)
-                    } else {
+                    case let .failure(error):
                         ypLog("YPVideoFiltersVC -> Invalid asset url.")
-
                     }
                 }
             }
             if let videoAsset = inputVideo.asset {
-                mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, callback: callback)
+                mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, result: result)
             } else {
-                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, callback: callback)
+                mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timerange, shouldMute: false, compressionTypeOverride: AVAssetExportPresetPassthrough, result: result)
             }
             return true
         } else {
