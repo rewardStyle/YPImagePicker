@@ -381,7 +381,6 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                 videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: videoAsset.localIdentifier)
                 mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
             } else {
-                // TODO: Need to solve the IG flow here.
                 videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: inputVideo.url.absoluteString)
                 mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
             }
