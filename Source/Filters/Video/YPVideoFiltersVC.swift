@@ -364,7 +364,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
             // cropping and trimming simultaneously to reduce total transcoding time
 
-            let result: (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void = { [weak self] result in
+            let result: ProcessingResult = { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case let .success(video):

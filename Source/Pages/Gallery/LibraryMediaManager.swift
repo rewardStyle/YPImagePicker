@@ -29,15 +29,9 @@ public struct ProcessedVideo {
         self.originalHeight = abs(originalHeight)
         self.totalVideoDuration = totalVideoDuration.rounded()
     }
-
-    public var trackingTags: [String: String] {
-        [
-            "width": String(originalWidth),
-            "height": String(originalHeight),
-            "durationSeconds": String(totalVideoDuration)
-        ]
-    }
 }
+
+public typealias ProcessingResult = (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void
 
 public enum LibraryMediaManagerError: Error {
     case processingFailed(message: String)
@@ -168,7 +162,7 @@ open class LibraryMediaManager {
     /// - Parameters:
     ///   - videoAsset: PHAsset which url is requested
     ///   - result: Returns the video metadata
-    func fetchVideoUrl(for videoAsset: PHAsset, result: @escaping (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void) {
+    func fetchVideoUrl(for videoAsset: PHAsset, result: @escaping ProcessingResult) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
         videosOptions.deliveryMode = .highQualityFormat
@@ -223,7 +217,7 @@ open class LibraryMediaManager {
         }
     }
 
-    open func fetchVideoUrlAndCrop(for videoAsset: PHAsset, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, result: @escaping (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void) {
+    open func fetchVideoUrlAndCrop(for videoAsset: PHAsset, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, result: @escaping ProcessingResult) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
         videosOptions.deliveryMode = .highQualityFormat
@@ -238,12 +232,12 @@ open class LibraryMediaManager {
         }
     }
 
-    open func fetchVideoUrlAndCrop(for videoUrl: URL, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, result: @escaping (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void) {
+    open func fetchVideoUrlAndCrop(for videoUrl: URL, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, result: @escaping ProcessingResult) {
         let asset = AVAsset(url: videoUrl)
         self.fetchVideoUrlAndCrop(for: asset, videoUrl: videoUrl, assetIdentifier: videoUrl.absoluteString, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionTypeOverride, processingFailedRetryCount: processingFailedRetryCount, isSlowMoVideo: false, result: result)
     }
 
-    private func fetchVideoUrlAndCrop(for videoAsset: AVAsset, videoUrl: URL? = nil, assetIdentifier: String, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, isSlowMoVideo: Bool = false, result: @escaping (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void) {
+    private func fetchVideoUrlAndCrop(for videoAsset: AVAsset, videoUrl: URL? = nil, assetIdentifier: String, cropRect: CGRect, timeRange: CMTimeRange = CMTimeRange(start: CMTime.zero, end: CMTime.zero), shouldMute: Bool = false, compressionTypeOverride: String? = nil, processingFailedRetryCount: Int = 0, isSlowMoVideo: Bool = false, result: @escaping ProcessingResult) {
 
         let assetComposition = AVMutableComposition()
         let trackTimeRange = timeRange
