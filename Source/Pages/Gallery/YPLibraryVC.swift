@@ -450,7 +450,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
     private func checkVideoLengthAndCrop(for asset: PHAsset,
                                          withCropRect: CGRect? = nil,
-                                         callback: @escaping (_ video: LibraryMediaManager.ProcessedVideo?) -> Void) {
+                                         callback: @escaping (_ video: ProcessedVideo?) -> Void) {
         if fitsVideoLengthLimits(asset: asset) == true {
             delegate?.libraryViewDidTapNext()
             let normalizedCropRect = withCropRect ?? DispatchQueue.main.sync { v.currentCropRect() }
@@ -470,7 +470,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     }
 
     private func checkVideoLengthAndFetch(for asset: PHAsset,
-                                          callback: @escaping (_ video: LibraryMediaManager.ProcessedVideo?) -> Void) {
+                                          callback: @escaping (_ video: ProcessedVideo?) -> Void) {
         if fitsVideoLengthLimits(asset: asset) == true {
             delegate?.libraryViewDidTapNext()
             mediaManager.fetchVideoUrl(for: asset, callback: callback)

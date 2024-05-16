@@ -15,26 +15,34 @@ extension Notification.Name {
     public static var LibraryMediaManagerExportProgressUpdate: Notification.Name { return .init(rawValue: "\(namespace).LibraryMediaManagerExportProgressUpdate") }
 }
 
+public struct ProcessedVideo {
+    public let assetIdentifier: String
+    public let fileUrl: URL
+    public let originalWidth: Int
+    public let originalHeight: Int
+    public let totalVideoDuration: TimeInterval
+
+    public init(assetIdentifier: String, fileUrl: URL, originalWidth: Int, originalHeight: Int, totalVideoDuration: TimeInterval) {
+        self.assetIdentifier = assetIdentifier
+        self.fileUrl = fileUrl
+        self.originalWidth = abs(originalWidth)
+        self.originalHeight = abs(originalHeight)
+        self.totalVideoDuration = totalVideoDuration.rounded()
+    }
+
+    public var trackingTags: [String: String] {
+        [
+            "width": String(originalWidth),
+            "height": String(originalHeight),
+            "durationSeconds": String(totalVideoDuration)
+        ]
+    }
+}
+
 open class LibraryMediaManager {
     struct ExportData {
         let localIdentifier: String
         let session: AVAssetExportSession
-    }
-
-    public struct ProcessedVideo {
-        public let assetIdentifier: String
-        public let fileUrl: URL
-        public let originalWidth: Int
-        public let originalHeight: Int
-        public let totalVideoDuration: TimeInterval
-
-        public init(assetIdentifier: String, fileUrl: URL, originalWidth: Int, originalHeight: Int, totalVideoDuration: TimeInterval) {
-            self.assetIdentifier = assetIdentifier
-            self.fileUrl = fileUrl
-            self.originalWidth = abs(originalWidth)
-            self.originalHeight = abs(originalHeight)
-            self.totalVideoDuration = totalVideoDuration
-        }
     }
 
     weak var v: YPLibraryView?

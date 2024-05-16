@@ -16,6 +16,12 @@ public enum YPVideoFiltersType {
     case Cover
 }
 
+public protocol YPVideoProcessingDelegate: AnyObject {
+    func willBeginVideoProcessing(assetIdentifier: String)
+    func didCompleteVideoProcessing(processedVideo: ProcessedVideo)
+    func didFailVideoProcessing(assetIdentifier: String)
+}
+
 open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
     /// Designated initializer
@@ -46,6 +52,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     public var isFromSelectionVC = false
     public var shouldMute = false
     public var shouldShowDone = false
+    public weak var videoProcessingDelegate: YPVideoProcessingDelegate?
 
     var coverImageTime: CMTime?
     var coverTrimTimes: (startTime: CMTime, endTime: CMTime)?
@@ -357,9 +364,11 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
             // cropping and trimming simultaneously to reduce total transcoding time
 
-            let callback: (_ video: LibraryMediaManager.ProcessedVideo?) -> Void = { [weak self] video in
+            let callback: (_ video: ProcessedVideo?) -> Void = { [weak self] video in
                 DispatchQueue.main.async {
                     if let video {
+                        self?.videoProcessingDelegate?.didCompleteVideoProcessing(processedVideo: video)
+
                         self?.completeSave(thumbnail: self?.croppedImage ?? UIImage(), videoUrl: video.fileUrl, asset: self?.inputVideo.asset, timeRange: timeRange)
                     } else {
                         ypLog("YPVideoFiltersVC -> Invalid asset url.")
@@ -369,9 +378,11 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             }
 
             if let videoAsset = inputVideo.asset {
+                videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: videoAsset.localIdentifier)
                 mediaManager.fetchVideoUrlAndCrop(for: videoAsset, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
             } else {
                 // TODO: Need to solve the IG flow here.
+                videoProcessingDelegate?.willBeginVideoProcessing(assetIdentifier: inputVideo.url.absoluteString)
                 mediaManager.fetchVideoUrlAndCrop(for: inputVideo.url, cropRect: inputVideo.cropRect!, timeRange: timeRange, shouldMute: shouldMute, callback: callback)
             }
 
@@ -537,7 +548,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
            startTime != coverTrimTimes?.startTime || endTime != coverTrimTimes?.endTime {
             let timerange = CMTimeRange(start: startTime, end: endTime)
 
-            let callback: (_ video: LibraryMediaManager.ProcessedVideo?) -> Void = { [weak self] video in
+            let callback: (_ video: ProcessedVideo?) -> Void = { [weak self] video in
                 DispatchQueue.main.async {
                     if let video {
                         let trimmedAsset = AVAsset(url: video.fileUrl)
