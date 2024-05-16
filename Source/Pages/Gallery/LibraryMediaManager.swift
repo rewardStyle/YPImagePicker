@@ -34,10 +34,30 @@ public struct ProcessedVideo {
 public typealias ProcessingResult = (Result<ProcessedVideo, LibraryMediaManagerError>) -> Void
 
 public enum LibraryMediaManagerError: Error {
-    case processingFailed(message: String)
-    case retryLimitReached(message: String)
-    case unknown(message: String)
-    case assetNotFound(message: String)
+    case processingFailed(message: String, assetId: String)
+    case retryLimitReached(message: String, assetId: String)
+    case unknown(message: String, assetId: String)
+    case assetNotFound(message: String, assetId: String)
+
+    public var message: String {
+        switch self {
+        case .unknown(message: let message, assetId: _), 
+             .assetNotFound(message: let message, assetId: _),
+             .processingFailed(message: let message, assetId: _),
+             .retryLimitReached(message: let message, assetId: _):
+            return message
+        }
+    }
+
+    public var assetId: String {
+        switch self {
+        case .unknown(message: _, assetId: let assetId),
+             .assetNotFound(message: _, assetId: let assetId),
+             .processingFailed(message: _, assetId: let assetId),
+             .retryLimitReached(message: _, assetId: let assetId):
+            return assetId
+        }
+    }
 }
 
 open class LibraryMediaManager {
@@ -170,7 +190,7 @@ open class LibraryMediaManager {
             do {
                 guard let asset = asset else {
                     ypLog("⚠️ PHCachingImageManager >>> Don't have the asset")
-                    result(.failure(.assetNotFound(message: "The asset could not be retrieved from the photos library.")))
+                    result(.failure(.assetNotFound(message: "The asset could not be retrieved from the photos library.", assetId: videoAsset.localIdentifier)))
                     return
                 }
 
@@ -194,14 +214,13 @@ open class LibraryMediaManager {
                                         result(.success(ProcessedVideo(assetIdentifier: videoAsset.localIdentifier, videoUrl: url, originalWidth: videoAsset.pixelWidth, originalHeight: videoAsset.pixelHeight, totalVideoDuration: videoAsset.duration)))
                                     } else {
                                         ypLog("LibraryMediaManager -> Don't have URL.")
-                                        result(.failure(.processingFailed(message: "The session output URL is missing.")))
+                                        result(.failure(.processingFailed(message: "The session output URL is missing.", assetId: videoAsset.localIdentifier)))
                                     }
                                 case .failed:
                                     ypLog("LibraryMediaManager -> Export of the video failed. Reason: \(String(describing: session.error))")
-                                    result(.failure(.processingFailed(message: "Video export failed with error: \(String(describing:session.error))")))
+                                    result(.failure(.processingFailed(message: "Video export failed with error: \(String(describing:session.error))", assetId: videoAsset.localIdentifier)))
                                 default:
                                     ypLog("LibraryMediaManager -> Export session completed with \(session.status) status. Not handling.")
-                                  //  callback(nil) //TODO: Fix
                                 }
                             }
                         }
@@ -212,7 +231,7 @@ open class LibraryMediaManager {
                 }
             } catch let error {
                 ypLog("⚠️ PHCachingImageManager >>> \(error)")
-                result(.failure(.processingFailed(message: "Exception thrown when requesting AV Asset: \(String(describing:error))")))
+                result(.failure(.processingFailed(message: "Exception thrown when requesting AV Asset: \(String(describing:error))", assetId: videoAsset.localIdentifier)))
             }
         }
     }
@@ -225,7 +244,7 @@ open class LibraryMediaManager {
         imageManager?.requestAVAsset(forVideo: videoAsset, options: videosOptions) { asset, _, _ in
             guard let asset = asset else {
                 ypLog("⚠️ PHCachingImageManager >>> Don't have the asset")
-                result(.failure(.assetNotFound(message: "The asset could not be retrieved from the photos library.")))
+                result(.failure(.assetNotFound(message: "The asset could not be retrieved from the photos library.", assetId: videoAsset.localIdentifier)))
                 return
             }
             self.fetchVideoUrlAndCrop(for: asset, assetIdentifier: videoAsset.localIdentifier, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionTypeOverride, processingFailedRetryCount: processingFailedRetryCount, isSlowMoVideo: isSlowMoVideo, result: result)
@@ -248,7 +267,7 @@ open class LibraryMediaManager {
               let videoCompositionTrack = assetComposition.addMutableTrack(withMediaType: .video,
                                                                            preferredTrackID: kCMPersistentTrackID_Invalid) else {
             ypLog("⚠️ PHCachingImageManager >>> Problems with video track")
-            result(.failure(.processingFailed(message: "The video track could not be found or added to the asset composition.")))
+            result(.failure(.processingFailed(message: "The video track could not be found or added to the asset composition.", assetId: assetIdentifier)))
             return
 
         }
@@ -348,7 +367,7 @@ open class LibraryMediaManager {
                             result(.success(ProcessedVideo(assetIdentifier: assetIdentifier, videoUrl: url, originalWidth: Int(videoSize.width), originalHeight: Int(videoSize.height), totalVideoDuration: totalSeconds)))
                         } else {
                             ypLog("LibraryMediaManager -> Don't have URL.")
-                            result(.failure(.processingFailed(message: "The session output URL is missing.")))
+                            result(.failure(.processingFailed(message: "The session output URL is missing.", assetId: assetIdentifier)))
                         }
                     case .failed:
                         if let self = self {
@@ -358,12 +377,12 @@ open class LibraryMediaManager {
                             let compressionOverride = YPConfig.video.compression
                             ypLog("LibraryMediaManager -> Export of the video failed. Reason: \(String(describing: session.error))\n--- Retrying with compression type \(compressionOverride)")
                             if retryCount > 1 {
-                                result(.failure(.retryLimitReached(message: "Video processing failed exceeing retry limit.")))
+                                result(.failure(.retryLimitReached(message: "Video processing failed exceeing retry limit.", assetId: assetIdentifier)))
                             } else {
                                 self.fetchVideoUrlAndCrop(for: videoAsset, assetIdentifier: assetIdentifier, cropRect: cropRect, timeRange: timeRange, shouldMute: shouldMute, compressionTypeOverride: compressionOverride, processingFailedRetryCount: retryCount, isSlowMoVideo: isSlowMoVideo, result: result)
                             }
                         } else {
-                            result(.failure(.unknown(message: "Could not strongly reference self.")))
+                            result(.failure(.unknown(message: "Could not strongly reference self.", assetId: assetIdentifier)))
                         }
                     default:
                         ypLog("LibraryMediaManager -> Export session completed with \(session.status) status. Not handling.")
