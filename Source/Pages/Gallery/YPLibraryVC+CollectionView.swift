@@ -95,7 +95,11 @@ extension YPLibraryVC {
     }
 
     func toggleBulkUploadRemoveAllButton() {
+        guard YPConfig.library.isBulkUploading else {
+            return
+        }
         v.bulkUploadRemoveAllButton.isHidden = selectedItems.isEmpty
+        v.bulkUploadRemoveAllButton.setTitle("\(selectedItems.count)", for: .normal)
     }
 
     func isInSelectionPool(indexPath: IndexPath) -> Bool {
@@ -177,14 +181,6 @@ extension YPLibraryVC: UICollectionViewDelegate {
             cell.multipleSelectionIndicator.set(number: nil)
         }
 
-        if selectedItems.isEmpty {
-            v.bulkUploadRemoveAllButton.setTitle("", for: .normal)
-            v.bulkUploadRemoveAllButton.isHidden = true
-        } else {
-            v.bulkUploadRemoveAllButton.setTitle("\(selectedItems.count)", for: .normal)
-            v.bulkUploadRemoveAllButton.isHidden = false
-        }
-
         // Prevent weird animation where thumbnail fills cell on first scrolls.
         UIView.performWithoutAnimation {
             cell.layoutIfNeeded()
@@ -241,6 +237,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
             changeAsset(mediaManager.getAsset(at: indexPath.row))
         }
         disableAutomaticCellSelection = false
+
+        toggleBulkUploadRemoveAllButton()
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {

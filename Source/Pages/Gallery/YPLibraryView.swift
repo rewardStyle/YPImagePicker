@@ -93,7 +93,7 @@ internal final class YPLibraryView: UIView {
 
     public let bulkUploadRemoveAllButton: UIButton = {
         var container = AttributeContainer()
-        container.font = YPConfig.fonts.rightBarButtonFont
+        container.font = YPConfig.fonts.bulkUploadCountFont
         container.foregroundColor = UIColor.ypLabel
         var configuration = UIButton.Configuration.plain()
         configuration.imagePadding = 4
@@ -307,8 +307,8 @@ internal final class YPLibraryView: UIView {
 
         if (YPConfig.library.isBulkUploading) {
             subviews(bulkUploadRemoveAllButton)
-            bulkUploadRemoveAllButton.size(30).trailing(16)
-            bulkUploadRemoveAllButton.layer.cornerRadius = 15
+            bulkUploadRemoveAllButton.height(25).width(55).trailing(16)
+            bulkUploadRemoveAllButton.layer.cornerRadius = 12.5
             align(horizontally: showAlbumsButton, bulkUploadRemoveAllButton)
         } else {
             subviews(multipleSelectionButton)
