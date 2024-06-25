@@ -31,7 +31,6 @@ class YPMultipleSelectionIndicator: UIView {
             )
             circle.fillContainer()
             circle.size(size)
-            imageView.size(10)
             imageView.fillContainer()
             imageView.image = YPConfig.icons.checkIcon
             imageView.contentMode = .scaleAspectFit
