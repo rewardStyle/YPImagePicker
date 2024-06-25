@@ -307,7 +307,7 @@ internal final class YPLibraryView: UIView {
 
         if (YPConfig.library.isBulkUploading) {
             subviews(bulkUploadRemoveAllButton)
-            bulkUploadRemoveAllButton.height(25).width(100%).trailing(16)
+            bulkUploadRemoveAllButton.height(25).trailing(16)
             bulkUploadRemoveAllButton.layer.cornerRadius = 12.5
             align(horizontally: showAlbumsButton, bulkUploadRemoveAllButton)
         } else {
