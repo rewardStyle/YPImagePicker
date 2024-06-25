@@ -183,7 +183,8 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     func bulkUploadRemoveAllButtonTapped() {
         self.selectedItems.removeAll()
         v.collectionView.reloadData()
-        toggleBulkUploadRemoveAllButton()
+        updateBulkUploadRemoveAllButton()
+        delegate?.libraryViewFinishedLoading()
     }
 
     // MARK: - Multiple Selection

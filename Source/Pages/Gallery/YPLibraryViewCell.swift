@@ -21,15 +21,13 @@ class YPMultipleSelectionIndicator: UIView {
 
     convenience init() {
         self.init(frame: .zero)
-        
-        let size: CGFloat = 20
 
         if YPConfig.library.isBulkUploading {
             subviews(
                 circle,
                 imageView
             )
-            imageView.fillContainer()
+            imageView.size(10)
             imageView.image = YPConfig.icons.checkIcon
             imageView.contentMode = .scaleAspectFit
             imageView.clipsToBounds = true
@@ -43,6 +41,8 @@ class YPMultipleSelectionIndicator: UIView {
             label.textColor = .white
             label.font = YPConfig.fonts.multipleSelectionIndicatorFont
         }
+
+        let size: CGFloat = 20
 
         circle.fillContainer()
         circle.size(size)

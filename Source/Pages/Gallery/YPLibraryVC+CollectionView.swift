@@ -72,7 +72,7 @@ extension YPLibraryVC {
             }
             v.collectionView.reloadItems(at: selectedIndexPaths)
             checkLimit()
-            toggleBulkUploadRemoveAllButton()
+            updateBulkUploadRemoveAllButton()
         }
     }
     
@@ -91,10 +91,10 @@ extension YPLibraryVC {
         selectedItems.append(newSelection)
         changeAsset(mediaManager.getAsset(at: indexPath.row))
         checkLimit()
-        toggleBulkUploadRemoveAllButton()
+        updateBulkUploadRemoveAllButton()
     }
 
-    func toggleBulkUploadRemoveAllButton() {
+    func updateBulkUploadRemoveAllButton() {
         guard YPConfig.library.isBulkUploading else {
             return
         }
@@ -237,8 +237,6 @@ extension YPLibraryVC: UICollectionViewDelegate {
             changeAsset(mediaManager.getAsset(at: indexPath.row))
         }
         disableAutomaticCellSelection = false
-
-        toggleBulkUploadRemoveAllButton()
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {

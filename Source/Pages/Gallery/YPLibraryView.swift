@@ -96,7 +96,7 @@ internal final class YPLibraryView: UIView {
         container.font = YPConfig.fonts.bulkUploadCountFont
         container.foregroundColor = UIColor.ypLabel
         var configuration = UIButton.Configuration.plain()
-        configuration.imagePadding = 4
+        configuration.imagePadding = 8
         configuration.attributedTitle = AttributedString("", attributes: container)
         configuration.image = YPConfig.icons.closeIcon
         configuration.imagePlacement = .trailing
