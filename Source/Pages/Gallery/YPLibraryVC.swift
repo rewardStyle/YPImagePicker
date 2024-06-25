@@ -16,7 +16,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     public var isProcessing = false // true if video or image is in processing state
     public var selectedItems = [YPLibrarySelection]()
     public let mediaManager = LibraryMediaManager()
-    public var isMultipleSelectionEnabled = false
+    public var isMultipleSelectionEnabled = YPConfig.library.isBulkUploading
     public var currentlySelectedIndex: Int = 0
     internal let panGestureHelper = PanGestureHelper()
     internal var isInitialized = false
@@ -208,7 +208,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     func toggleMultipleSelection() {
         // Prevent desactivating multiple selection when using `minNumberOfItems`
-        if YPConfig.library.isBulkUploading || (YPConfig.library.minNumberOfItems > 1 && isMultipleSelectionEnabled) {
+        if (YPConfig.library.minNumberOfItems > 1 && isMultipleSelectionEnabled) {
             ypLog("Selected minNumberOfItems greater than one :\(YPConfig.library.minNumberOfItems). Don't deselecting multiple selection.")
             return
         }
