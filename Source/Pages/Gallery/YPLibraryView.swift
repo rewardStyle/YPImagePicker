@@ -94,14 +94,16 @@ internal final class YPLibraryView: UIView {
     public let bulkUploadRemoveAllButton: UIButton = {
         var container = AttributeContainer()
         container.font = YPConfig.fonts.rightBarButtonFont
+        container.foregroundColor = UIColor.ypLabel
         var configuration = UIButton.Configuration.plain()
         configuration.imagePadding = 4
         configuration.attributedTitle = AttributedString("", attributes: container)
-        configuration.image = YPConfig.icons.removeImage
+        configuration.image = YPConfig.icons.closeIcon
         configuration.imagePlacement = .trailing
 
         let v = UIButton(configuration: configuration)
         v.isHidden = true
+        v.backgroundColor = UIColor.ypSystemBackground
         return v
     }()
 

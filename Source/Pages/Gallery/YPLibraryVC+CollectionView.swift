@@ -177,6 +177,14 @@ extension YPLibraryVC: UICollectionViewDelegate {
             cell.multipleSelectionIndicator.set(number: nil)
         }
 
+        if selectedItems.isEmpty {
+            v.bulkUploadRemoveAllButton.setTitle("", for: .normal)
+            v.bulkUploadRemoveAllButton.isHidden = true
+        } else {
+            v.bulkUploadRemoveAllButton.setTitle("\(selectedItems.count)", for: .normal)
+            v.bulkUploadRemoveAllButton.isHidden = false
+        }
+
         // Prevent weird animation where thumbnail fills cell on first scrolls.
         UIView.performWithoutAnimation {
             cell.layoutIfNeeded()
