@@ -195,7 +195,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
     // MARK: - Setup
 
-    private func setupGenerator(_ asset: AVAsset) {
+    public func setupGenerator(_ asset: AVAsset) {
         // Set initial video cover
         imageGenerator = AVAssetImageGenerator(asset: asset)
         imageGenerator?.appliesPreferredTrackTransform = true
@@ -449,9 +449,13 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         case .Cover:
             selectCover()
         }
+    }
+
+    open func setModeAndPrepareThumbnails(type: YPVideoFiltersType) {
+        setMode(type: type)
         prepareThumbnails()
     }
-    
+
     // MARK: - Various Methods
 
     // Updates the bounds of the cover picker if the video is trimmed
@@ -521,7 +525,7 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         }
     }
 
-    private func generateCoverImageAtTime(_ time: CMTime) {
+    public func generateCoverImageAtTime(_ time: CMTime) {
         imageGenerator?.generateCGImagesAsynchronously(forTimes: [NSValue(time:time)],
                                                        completionHandler: { [weak self] (_, image, _, _, _) in
             guard let image = image else {
@@ -575,6 +579,15 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         } else {
             return false
         }
+    }
+}
+
+// MARK: - Cover Image Update Support
+
+public extension YPVideoFiltersVC {
+    func updateCoverImage(to coverImage: UIImage) {
+        croppedImage = coverImage
+        coverImageView.image = coverImage
     }
 }
 
