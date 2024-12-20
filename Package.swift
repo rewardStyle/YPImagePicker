@@ -18,7 +18,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/rewardStyle/PryntTrimmerView",
-            .branch("uat-1-low-priority-issues")
+            .exact("4.0.4")
         )
 
     ],

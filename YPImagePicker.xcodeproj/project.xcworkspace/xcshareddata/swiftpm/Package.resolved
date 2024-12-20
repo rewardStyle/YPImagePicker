@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rewardstyle/prynttrimmerview",
       "state" : {
-        "branch" : "uat-1-low-priority-issues",
-        "revision" : "e51d5001b4798c3fa9235b549add38cecee538e8"
+        "revision" : "59379933130df86e35b6f6a60aefa7262368854a",
+        "version" : "4.0.4"
       }
     },
     {
