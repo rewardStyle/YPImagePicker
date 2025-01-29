@@ -22,6 +22,10 @@ public class YPMediaPhoto {
     public var url: URL?
     public var cropRect: CGRect?
 
+    public var mediaLocation: CLLocation? {
+        asset?.location
+    }
+
     public var customData: [String: Any]?
 
     public init(image: UIImage,
@@ -56,6 +60,9 @@ public class YPMediaVideo {
     public var timeRange: CMTimeRange?
     public var cropRect: CGRect?
 
+    public var mediaLocation: CLLocation? {
+        asset?.location
+    }
 
     public var customData: [String: Any]?
 
@@ -114,6 +121,13 @@ public enum YPMediaItem {
         switch self {
         case .photo(let photo): photo.customData
         case .video(let video): video.customData
+        }
+    }
+
+    public var mediaLocation: CLLocation? {
+        switch self {
+        case .photo(let photo): photo.mediaLocation
+        case .video(let video): video.mediaLocation
         }
     }
 }
