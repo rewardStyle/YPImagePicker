@@ -75,9 +75,10 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         return view
     }()
 
-    public var coverThumbSelectorView: ThumbSelectorView = {
+    public lazy var coverThumbSelectorView: ThumbSelectorView = {
         let v = ThumbSelectorView()
         v.thumbBorderColor = YPConfig.colors.coverSelectorBorderColor
+        v.targetAspectRatio = videoView.targetAspectRatio
         v.isHidden = true
         return v
     }()
