@@ -3,11 +3,11 @@
     "pins": [
       {
         "package": "PryntTrimmerView",
-        "repositoryURL": "https://github.com/HHK1/PryntTrimmerView",
+        "repositoryURL": "https://github.com/rewardStyle/PryntTrimmerView",
         "state": {
           "branch": null,
-          "revision": "ac1b60a22c7e6a6514de7a66d2f3d5b537c956d5",
-          "version": "4.0.2"
+          "revision": "59379933130df86e35b6f6a60aefa7262368854a",
+          "version": "4.0.4"
         }
       },
       {
