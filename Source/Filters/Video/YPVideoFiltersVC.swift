@@ -609,8 +609,8 @@ open class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 // MARK: - Cover Image Update Support
 
 public extension YPVideoFiltersVC {
-    func updateCoverImage(to coverImage: UIImage) {
-        isUsingCustomCoverImage = true
+    func updateCoverImage(to coverImage: UIImage, isCustomImage: Bool) {
+        isUsingCustomCoverImage = isCustomImage
         croppedImage = coverImage
         coverImageView.image = coverImage
     }
