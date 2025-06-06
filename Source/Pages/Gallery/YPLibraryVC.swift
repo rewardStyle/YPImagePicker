@@ -155,7 +155,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
         
         // Activate multiple selection when using `minNumberOfItems`
-        if YPConfig.library.minNumberOfItems > 1 {
+        if YPConfig.library.minNumberOfItems >= 1 {
             multipleSelectionButtonTapped()
         }
     }
@@ -209,8 +209,8 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     }
     
     func toggleMultipleSelection() {
-        // Prevent desactivating multiple selection when using `minNumberOfItems`
-        if (YPConfig.library.minNumberOfItems > 1 && isMultipleSelectionEnabled) {
+        // Prevent deactivating multiple selection when using `minNumberOfItems`
+        if (YPConfig.library.minNumberOfItems >= 1 && isMultipleSelectionEnabled) {
             ypLog("Selected minNumberOfItems greater than one :\(YPConfig.library.minNumberOfItems). Don't deselecting multiple selection.")
             return
         }
