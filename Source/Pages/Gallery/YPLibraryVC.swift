@@ -527,7 +527,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
             DispatchQueue.global(qos: .userInitiated).async {
                 // Multiple selection
-                if self.isMultipleSelectionEnabled && selectedAssets.count > 1 {
+                if self.isMultipleSelectionEnabled && selectedAssets.count >= YPConfig.library.minNumberOfItems {
 
                     // Check video length
                     for asset in selectedAssets {
