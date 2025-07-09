@@ -109,6 +109,9 @@ public struct YPImagePickerConfiguration {
     /// Defines if the title bar should show the button that allows switching between the library and albums. If this is set to false, the button will be shown between the asset view and the library view instead
     public var showsLibraryButtonInTitle = true
 
+    /// Defines if the title bar should show the button that allows starting with a draft instead of media. Default if false.
+    public var showsDraftButtonInTitle = false
+
     /// If showsLibraryButtonInTitle is false, this will be used as the title text instead
     public var pickerTitleOverride: String? = nil
 

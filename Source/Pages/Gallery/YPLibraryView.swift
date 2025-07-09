@@ -86,6 +86,28 @@ internal final class YPLibraryView: UIView {
         return buttonContainerView
     }()
 
+    public let showDraftsButton: UIView = {
+        let containerView = UIView()
+
+        let label = UILabel()
+        label.text = YPConfig.wordings.draftsTitle
+        label.font = YPConfig.fonts.pickerTitleFont
+        label.textColor = YPConfig.colors.draftsButtonTextColor
+
+        let button = UIButton()
+        button.addTarget(self, action: #selector(draftsButtonTapped), for: .touchUpInside)
+        button.setBackgroundColor(YPConfig.colors.assetViewBackgroundColor.withAlphaComponent(0.4), forState: .highlighted)
+
+        containerView.subviews(label, button)
+        button.fillContainer()
+        |-(8)-label.centerHorizontally()-(8)-|
+
+        label.firstBaselineAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -24).isActive = true
+        containerView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+
+        return containerView
+    }()
+
     public let multipleSelectionButton: UIButton = {
         let v = UIButton()
         v.setImage(YPConfig.icons.multipleSelectionOffIcon, for: .normal)
@@ -110,6 +132,7 @@ internal final class YPLibraryView: UIView {
     }()
 
     var onAlbumsButtonTap: (() -> Void)?
+    var onDraftsButtonTap: (() -> Void)?
 
     // MARK: - Private vars
 
@@ -312,6 +335,18 @@ internal final class YPLibraryView: UIView {
             bulkUploadRemoveAllButton.height(25).trailing(16)
             bulkUploadRemoveAllButton.layer.cornerRadius = 12.5
             align(horizontally: showAlbumsButton, bulkUploadRemoveAllButton)
+        } else if YPConfig.showsDraftButtonInTitle {
+            subviews(multipleSelectionButton)
+            multipleSelectionButton.size(30).trailing(16)
+            showAlbumsButton.leading(0)
+
+            subviews(showDraftsButton)
+            showDraftsButton.Top == showAlbumsButton.Top
+            showDraftsButton.Bottom == showAlbumsButton.Bottom
+            showDraftsButton.Leading == showAlbumsButton.Trailing
+            showDraftsButton.Trailing <= multipleSelectionButton.Leading - 16
+
+            align(horizontally: showAlbumsButton, showDraftsButton, multipleSelectionButton)
         } else {
             subviews(multipleSelectionButton)
             multipleSelectionButton.size(30).trailing(16)
@@ -322,5 +357,10 @@ internal final class YPLibraryView: UIView {
     @objc
     func albumsButtonTapped() {
         onAlbumsButtonTap?()
+    }
+
+    @objc
+    func draftsButtonTapped() {
+        onDraftsButtonTap?()
     }
 }

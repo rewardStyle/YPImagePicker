@@ -31,6 +31,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     public var didClose:(() -> Void)?
     public var didSelectItems: (([YPMediaItem]) -> Void)?
     public var didTapMultipleSelection: ((Bool) -> Void)?
+    public var didTapDrafts: (() -> Void)?
     public var viewDidAppear: ((AnyObject) -> Void)?
     
     enum Mode {
@@ -420,6 +421,10 @@ extension YPPickerVC: YPLibraryViewDelegate {
     
     public func libraryViewShouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return pickerVCDelegate?.shouldAddToSelection(indexPath: indexPath, numSelections: numSelections) ?? true
+    }
+
+    public func libraryViewDidTapDrafts() {
+        didTapDrafts?()
     }
 
     public func libraryViewDidTapAlbum() {
