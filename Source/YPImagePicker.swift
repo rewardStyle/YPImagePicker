@@ -13,6 +13,7 @@ import Photos
 public protocol YPImagePickerDelegate: AnyObject {
     func imagePickerHasNoItemsInLibrary(_ picker: YPImagePicker)
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool
+    func didTapSecondaryLibraryButton()
 }
 
 open class YPImagePicker: UINavigationController {
@@ -38,7 +39,7 @@ open class YPImagePicker: UINavigationController {
         modalPresentationStyle = .fullScreen // Force .fullScreen as iOS 13 now shows modals as cards by default.
         picker.pickerVCDelegate = self
         picker.didTapSecondaryLibraryButton = { [weak self] in
-            self?.pushViewController(UIViewController(), animated: true)
+            self?.imagePickerDelegate?.didTapSecondaryLibraryButton()
         }
     }
 
