@@ -86,16 +86,16 @@ internal final class YPLibraryView: UIView {
         return buttonContainerView
     }()
 
-    public let showDraftsButton: UIView = {
+    public let secondaryButton: UIView = {
         let containerView = UIView()
 
         let label = UILabel()
-        label.text = YPConfig.wordings.draftsTitle
+        label.text = YPConfig.wordings.secondaryLibraryTitle
         label.font = YPConfig.fonts.pickerTitleFont
-        label.textColor = YPConfig.colors.draftsButtonTextColor
+        label.textColor = YPConfig.colors.secondaryLibraryButtonTextColor
 
         let button = UIButton()
-        button.addTarget(self, action: #selector(draftsButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
         button.setBackgroundColor(YPConfig.colors.assetViewBackgroundColor.withAlphaComponent(0.4), forState: .highlighted)
 
         containerView.subviews(label, button)
@@ -132,7 +132,7 @@ internal final class YPLibraryView: UIView {
     }()
 
     var onAlbumsButtonTap: (() -> Void)?
-    var onDraftsButtonTap: (() -> Void)?
+    var onSecondaryButtonTap: (() -> Void)?
 
     // MARK: - Private vars
 
@@ -335,18 +335,18 @@ internal final class YPLibraryView: UIView {
             bulkUploadRemoveAllButton.height(25).trailing(16)
             bulkUploadRemoveAllButton.layer.cornerRadius = 12.5
             align(horizontally: showAlbumsButton, bulkUploadRemoveAllButton)
-        } else if YPConfig.showsDraftButtonInTitle {
+        } else if YPConfig.showsSecondaryLibraryButtonInTitle {
             subviews(multipleSelectionButton)
             multipleSelectionButton.size(30).trailing(16)
             showAlbumsButton.leading(0)
 
-            subviews(showDraftsButton)
-            showDraftsButton.Top == showAlbumsButton.Top
-            showDraftsButton.Bottom == showAlbumsButton.Bottom
-            showDraftsButton.Leading == showAlbumsButton.Trailing
-            showDraftsButton.Trailing <= multipleSelectionButton.Leading - 16
+            subviews(secondaryButton)
+            secondaryButton.Top == showAlbumsButton.Top
+            secondaryButton.Bottom == showAlbumsButton.Bottom
+            secondaryButton.Leading == showAlbumsButton.Trailing
+            secondaryButton.Trailing <= multipleSelectionButton.Leading - 16
 
-            align(horizontally: showAlbumsButton, showDraftsButton, multipleSelectionButton)
+            align(horizontally: showAlbumsButton, secondaryButton, multipleSelectionButton)
         } else {
             subviews(multipleSelectionButton)
             multipleSelectionButton.size(30).trailing(16)
@@ -360,7 +360,7 @@ internal final class YPLibraryView: UIView {
     }
 
     @objc
-    func draftsButtonTapped() {
-        onDraftsButtonTap?()
+    func secondaryButtonTapped() {
+        onSecondaryButtonTap?()
     }
 }

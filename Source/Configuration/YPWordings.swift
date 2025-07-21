@@ -35,7 +35,7 @@ public struct YPWordings {
     public var cover = ypLocalized("YPImagePickerCover")
     public var albumsTitle = ypLocalized("YPImagePickerAlbums")
     public var libraryTitle = ypLocalized("YPImagePickerLibrary")
-    public var draftsTitle = ypLocalized("YPImagePickerDrafts")
+    public var secondaryLibraryTitle = ypLocalized("YPImagePickerSecondary")
     public var cameraTitle = ypLocalized("YPImagePickerPhoto")
     public var videoTitle = ypLocalized("YPImagePickerVideo")
     public var next = ypLocalized("YPImagePickerNext")

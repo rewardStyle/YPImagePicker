@@ -77,8 +77,8 @@ public struct YPColors {
     /// The color of the button that changes between library and albums _when_ showsLibraryButtonInTitle is false
     public var libraryScreenAlbumsButtonColor: UIColor = .ypLabel
 
-    /// The color of the drafts button.
-    public var draftsButtonTextColor: UIColor = .ypSecondaryLabel
+    /// The color of the secondary library button.
+    public var secondaryLibraryButtonTextColor: UIColor = .ypSecondaryLabel
 
     // MARK: - Trimmer
     

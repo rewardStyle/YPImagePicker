@@ -17,5 +17,5 @@ public protocol YPLibraryViewDelegate: AnyObject {
     func libraryViewShouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool
     func libraryViewHaveNoItems()
     func libraryViewDidTapAlbum()
-    func libraryViewDidTapDrafts()
+    func libraryViewDidTapSecondaryButton()
 }

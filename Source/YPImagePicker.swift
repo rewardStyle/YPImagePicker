@@ -37,7 +37,7 @@ open class YPImagePicker: UINavigationController {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen // Force .fullScreen as iOS 13 now shows modals as cards by default.
         picker.pickerVCDelegate = self
-        picker.didTapDrafts = { [weak self] in
+        picker.didTapSecondaryLibraryButton = { [weak self] in
             self?.pushViewController(UIViewController(), animated: true)
         }
     }

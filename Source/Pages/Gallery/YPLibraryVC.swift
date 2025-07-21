@@ -130,8 +130,8 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             self?.delegate?.libraryViewDidTapAlbum()
         }
 
-        v.onDraftsButtonTap = { [weak self] in
-            self?.delegate?.libraryViewDidTapDrafts()
+        v.onSecondaryButtonTap = { [weak self] in
+            self?.delegate?.libraryViewDidTapSecondaryButton()
         }
     }
     
