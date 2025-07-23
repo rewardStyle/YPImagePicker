@@ -129,6 +129,10 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         v.onAlbumsButtonTap = { [weak self] in
             self?.delegate?.libraryViewDidTapAlbum()
         }
+
+        v.onSecondaryButtonTap = { [weak self] in
+            self?.delegate?.libraryViewDidTapSecondaryButton()
+        }
     }
     
     public override func viewDidAppear(_ animated: Bool) {

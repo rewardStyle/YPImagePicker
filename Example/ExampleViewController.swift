@@ -13,6 +13,7 @@ import Photos
 
 class ExampleViewController: UIViewController {
     var selectedItems = [YPMediaItem]()
+    var picker: YPImagePicker?
 
     lazy var selectedImageV : UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: 0,
@@ -288,6 +289,7 @@ class ExampleViewController: UIViewController {
         //}
 
         present(picker, animated: true, completion: nil)
+        self.picker = picker
     }
 }
 
@@ -309,5 +311,11 @@ extension ExampleViewController: YPImagePickerDelegate {
 
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return true // indexPath.row != 2
+    }
+
+    func didTapSecondaryLibraryButton() {
+        let viewController = UIViewController()
+        viewController.title = "Secondary Library"
+        picker?.pushViewController(viewController, animated: true)
     }
 }
