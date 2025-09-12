@@ -18,8 +18,8 @@ protocol YPPickerVCDelegate: AnyObject {
 open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
     public enum LibraryButtonTags {
-        static let showAlbumsButton = 1
-        static let secondaryButton = 2
+        public static let showAlbumsButton = 1
+        public static let secondaryButton = 2
     }
 
     let albumsManager = YPAlbumsManager()
