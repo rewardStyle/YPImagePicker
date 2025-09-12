@@ -16,7 +16,12 @@ protocol YPPickerVCDelegate: AnyObject {
 }
 
 open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
-    
+
+    public enum LibraryButtonTags {
+        public static let showAlbumsButton = 1
+        public static let secondaryButton = 2
+    }
+
     let albumsManager = YPAlbumsManager()
     var shouldHideStatusBar = false
     var initialStatusBarHidden = false
@@ -32,7 +37,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     public var didSelectItems: (([YPMediaItem]) -> Void)?
     public var didTapMultipleSelection: ((Bool) -> Void)?
     public var didTapSecondaryLibraryButton: (() -> Void)?
-    public var viewDidAppear: ((AnyObject) -> Void)?
+    public var viewDidAppear: (() -> Void)?
     
     enum Mode {
         case library
@@ -142,9 +147,9 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
             self.setNeedsStatusBarAppearanceUpdate()
         }
 
-        if let button = libraryVC?.v.multipleSelectionButton {
-            viewDidAppear?(button)
-        }
+        libraryVC?.v.showAlbumsButton.tag = LibraryButtonTags.showAlbumsButton
+        libraryVC?.v.secondaryButton.tag = LibraryButtonTags.secondaryButton
+        viewDidAppear?()
     }
 
     internal func pagerScrollViewDidScroll(_ scrollView: UIScrollView) { }
