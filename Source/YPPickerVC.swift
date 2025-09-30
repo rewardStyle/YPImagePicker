@@ -20,6 +20,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     public enum LibraryButtonTags {
         public static let showAlbumsButton = 1
         public static let secondaryButton = 2
+        public static let multipleSelectionButton = 3
     }
 
     let albumsManager = YPAlbumsManager()
@@ -149,6 +150,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
         libraryVC?.v.showAlbumsButton.tag = LibraryButtonTags.showAlbumsButton
         libraryVC?.v.secondaryButton.tag = LibraryButtonTags.secondaryButton
+        libraryVC?.v.multipleSelectionButton.tag = LibraryButtonTags.multipleSelectionButton
         viewDidAppear?()
     }
 
