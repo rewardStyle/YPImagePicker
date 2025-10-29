@@ -163,7 +163,7 @@ open class LibraryMediaManager {
             
             var addedIndexPaths: [IndexPath] = []
             var removedIndexPaths: [IndexPath] = []
-            
+
             previousPreheatRect.differenceWith(rect: preheatRect, removedHandler: { removedRect in
                 let indexPaths = collectionView.aapl_indexPathsForElementsInRect(removedRect)
                 removedIndexPaths += indexPaths
@@ -171,13 +171,25 @@ open class LibraryMediaManager {
                 let indexPaths = collectionView.aapl_indexPathsForElementsInRect(addedRect)
                 addedIndexPaths += indexPaths
             })
-            
-            guard let assetsToStartCaching = fetchResult?.assetsAtIndexPaths(addedIndexPaths),
-                  let assetsToStopCaching = fetchResult?.assetsAtIndexPaths(removedIndexPaths) else {
+
+            guard let fetchResult = fetchResult else {
                 ypLog("Some problems in fetching and caching assets.")
                 return
             }
-            
+            let showCameraButton = YPConfig.library.cameraButtonCellConfiguration.showGalleryCameraButton
+
+            let assetsToStartCaching = ypAssetsAtIndexPaths(
+                addedIndexPaths,
+                in: fetchResult,
+                includeCameraButton: showCameraButton
+            )
+
+            let assetsToStopCaching = ypAssetsAtIndexPaths(
+                removedIndexPaths,
+                in: fetchResult,
+                includeCameraButton: showCameraButton
+            )
+
             imageManager?.startCachingImages(for: assetsToStartCaching,
                                              targetSize: cellSize,
                                              contentMode: .aspectFill,

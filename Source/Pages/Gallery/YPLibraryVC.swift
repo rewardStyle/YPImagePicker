@@ -235,11 +235,11 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     currentlySelectedIndex = index
                     changeAsset(image)
                 }
-                addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
+                addToSelection(assetIndex: currentlySelectedIndex)
             }
         } else {
             selectedItems.removeAll()
-            addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
+            addToSelection(assetIndex: currentlySelectedIndex)
         }
         
         v.assetViewContainer.setMultipleSelectionMode(on: isMultipleSelectionEnabled)
@@ -266,7 +266,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
     
-    func refreshMediaRequest() {
+    public func refreshMediaRequest() {
         let options = buildPHFetchOptions()
 
         if
@@ -296,7 +296,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             v.collectionView.reloadData()
 
             if !isMultipleSelectionEnabled && YPConfig.library.preSelectItemOnMultipleSelection {
-                addToSelection(indexPath: IndexPath(row: 0, section: 0))
+                addToSelection(assetIndex: 0)
             }
         } else {
             delegate?.libraryViewHaveNoItems()

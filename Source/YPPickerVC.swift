@@ -386,10 +386,14 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         videoVC?.stopCamera()
         cameraVC?.stopCamera()
     }
+
+    open func thumbnailForVideo(_ path: URL) -> UIImage {
+        thumbnailFromVideoPath(path)
+    }
 }
 
 extension YPPickerVC: YPLibraryViewDelegate {
-    
+
     public func libraryViewDidTapNext() {
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
@@ -436,5 +440,11 @@ extension YPPickerVC: YPLibraryViewDelegate {
 
     public func libraryViewDidTapAlbum() {
         navBarTapped()
+    }
+
+    open func libraryViewDidTapCameraButtonCell() {
+        if let index = YPConfig.screens.firstIndex(of: .video) {
+            showPage(index)
+        }
     }
 }

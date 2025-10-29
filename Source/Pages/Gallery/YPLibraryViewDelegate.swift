@@ -18,4 +18,5 @@ public protocol YPLibraryViewDelegate: AnyObject {
     func libraryViewHaveNoItems()
     func libraryViewDidTapAlbum()
     func libraryViewDidTapSecondaryButton()
+    func libraryViewDidTapCameraButtonCell()
 }

@@ -10,12 +10,34 @@ import UIKit
 
 extension YPLibraryVC {
     var isLimitExceeded: Bool { return selectedItems.count >= YPConfig.library.maxNumberOfItems }
-    
-    func setupCollectionView() {
+
+    /// Map a visible indexPath to an asset index in mediaManager.fetchResult (nil == camera cell at item 0)
+    private func assetIndex(for indexPath: IndexPath) -> Int? {
+        if showGalleryCameraButton {
+            return indexPath.item == 0 ? nil : (indexPath.item - 1)
+        } else {
+            return indexPath.item
+        }
+    }
+
+    /// Map an asset index back to its visible indexPath in the collection view
+    private func indexPath(forAssetIndex assetIndex: Int) -> IndexPath {
+        if showGalleryCameraButton {
+            return IndexPath(item: assetIndex + 1, section: 0)
+        } else {
+            return IndexPath(item: assetIndex, section: 0)
+        }
+    }
+
+    private var showGalleryCameraButton: Bool {
+        YPConfig.library.cameraButtonCellConfiguration.showGalleryCameraButton
+    }
+
+    public func setupCollectionView() {
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
         v.collectionView.register(YPLibraryViewCell.self, forCellWithReuseIdentifier: "YPLibraryViewCell")
-        
+        v.collectionView.register(YPCameraButtonCell.self, forCellWithReuseIdentifier: "YPCameraButtonCell")
         // Long press on cell to enable multiple selection
         let longPressGR = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(longPressGR:)))
         longPressGR.minimumPressDuration = 0.5
@@ -38,11 +60,13 @@ extension YPLibraryVC {
     }
     
     func startMultipleSelection(at indexPath: IndexPath) {
-        currentlySelectedIndex = indexPath.row
+        guard let assetIndex = assetIndex(for: indexPath) else { return }
+
+        currentlySelectedIndex = assetIndex
         toggleMultipleSelection()
         
         // Update preview.
-        changeAsset(mediaManager.getAsset(at: indexPath.row))
+        changeAsset(mediaManager.getAsset(at: assetIndex))
 
         // Bring preview down and keep selected cell visible.
         panGestureHelper.resetToOriginalState()
@@ -55,19 +79,19 @@ extension YPLibraryVC {
     // MARK: - Library collection view cell managing
     
     /// Removes cell from selection
-    func deselect(indexPath: IndexPath) {
+    func deselect(assetIndex: Int) {
         if let positionIndex = selectedItems.firstIndex(where: {
-            $0.assetIdentifier == mediaManager.getAsset(at: indexPath.row)?.localIdentifier
-		}) {
+            $0.assetIdentifier == mediaManager.getAsset(at: assetIndex)?.localIdentifier
+        }) {
             selectedItems.remove(at: positionIndex)
 
             // Refresh the numbers
-            let selectedIndexPaths = selectedItems.map { IndexPath(row: $0.index, section: 0) }
-			
+            let selectedIndexPaths = selectedItems.map { indexPath(forAssetIndex: $0.index) }
+
             // Replace the current selected image with the previously selected one
-            if let previouslySelectedIndexPath = selectedIndexPaths.last {
-                currentlySelectedIndex = previouslySelectedIndexPath.row
-                let asset = mediaManager.getAsset(with: selectedItems.last?.assetIdentifier)
+            if let last = selectedItems.last {
+                currentlySelectedIndex = last.index
+                let asset = mediaManager.getAsset(with: last.assetIdentifier)
                 changeAsset(asset)
             }
             v.collectionView.reloadItems(at: selectedIndexPaths)
@@ -77,19 +101,21 @@ extension YPLibraryVC {
     }
     
     /// Adds cell to selection
-    func addToSelection(indexPath: IndexPath) {
-        if !(delegate?.libraryViewShouldAddToSelection(indexPath: indexPath,
+    func addToSelection(assetIndex: Int) {
+        let visibleIndexPath = indexPath(forAssetIndex: assetIndex)
+
+        if !(delegate?.libraryViewShouldAddToSelection(indexPath: visibleIndexPath,
                                                        numSelections: selectedItems.count) ?? true) {
             return
         }
-        guard let asset = mediaManager.getAsset(at: indexPath.item) else {
+        guard let asset = mediaManager.getAsset(at: assetIndex) else {
             ypLog("No asset to add to selection.")
             return
         }
 
-        let newSelection = YPLibrarySelection(index: indexPath.row, assetIdentifier: asset.localIdentifier)
+        let newSelection = YPLibrarySelection(index: assetIndex, assetIdentifier: asset.localIdentifier)
         selectedItems.append(newSelection)
-        changeAsset(mediaManager.getAsset(at: indexPath.row))
+        changeAsset(mediaManager.getAsset(at: assetIndex))
         checkLimit()
         updateBulkUploadRemoveAllButton()
     }
@@ -102,10 +128,10 @@ extension YPLibraryVC {
         v.bulkUploadRemoveAllButton.setTitle("\(selectedItems.count)", for: .normal)
     }
 
-    func isInSelectionPool(indexPath: IndexPath) -> Bool {
+    func isInSelectionPool(assetIndex: Int) -> Bool {
         return selectedItems.contains(where: {
-            $0.assetIdentifier == mediaManager.getAsset(at: indexPath.row)?.localIdentifier
-		})
+            $0.assetIdentifier == mediaManager.getAsset(at: assetIndex)?.localIdentifier
+        })
     }
     
     /// Checks if there can be selected more items. If no - present warning.
@@ -117,7 +143,8 @@ extension YPLibraryVC {
 
 extension YPLibraryVC: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mediaManager.fetchResult?.count ?? 0
+        let resultCount = mediaManager.fetchResult?.count ?? 0
+        return showGalleryCameraButton ? resultCount + 1 : resultCount
     }
 }
 
@@ -125,10 +152,17 @@ extension YPLibraryVC: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if showGalleryCameraButton && indexPath.item == 0 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "YPCameraButtonCell", for: indexPath) as! YPCameraButtonCell
+            cell.configure(with: YPConfig.library.cameraButtonCellConfiguration)
+            return cell
+        }
+
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "YPLibraryViewCell", for: indexPath) as? YPLibraryViewCell else {
             fatalError("unexpected cell in collection view")
         }
-        guard let asset = mediaManager.getAsset(at: indexPath.item) else {
+        guard let assetIndex = assetIndex(for: indexPath),
+              let asset = mediaManager.getAsset(at: assetIndex) else {
             return cell
         }
 
@@ -156,7 +190,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         cell.durationLabel.isHidden = !isVideo
         cell.durationLabel.text = isVideo ? YPHelper.formattedStrigFrom(asset.duration) : ""
 
-        cell.isSelected = !disableAutomaticCellSelection && currentlySelectedIndex == indexPath.row && selectedItems.contains(where: { $0.assetIdentifier == asset.localIdentifier })
+        cell.isSelected = !disableAutomaticCellSelection && currentlySelectedIndex == assetIndex && selectedItems.contains(where: { $0.assetIdentifier == asset.localIdentifier })
 
         if !YPImagePickerConfiguration.shared.library.allowPhotoAndVideoSelection {
             cell.multipleSelectionIndicator.isHidden = !isMultipleSelectionEnabled || (isMultipleSelectionEnabled && isVideo)
@@ -170,7 +204,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         if let index = selectedItems.firstIndex(where: { $0.assetIdentifier == asset.localIdentifier }) {
             let currentSelection = selectedItems[index]
             if currentSelection.index < 0 {
-                selectedItems[index] = YPLibrarySelection(index: indexPath.row,
+                selectedItems[index] = YPLibrarySelection(index: assetIndex,
                                                       cropRect: currentSelection.cropRect,
                                                       scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                       scrollViewZoomScale: currentSelection.scrollViewZoomScale,
@@ -189,8 +223,16 @@ extension YPLibraryVC: UICollectionViewDelegate {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
-        currentlySelectedIndex = indexPath.row
+        if showGalleryCameraButton && indexPath.item == 0 {
+            delegate?.libraryViewDidTapCameraButtonCell()
+            return
+        }
+
+        guard let tappedAssetIndex = assetIndex(for: indexPath) else { return }
+
+        let previouslySelectedAssetIndex = currentlySelectedIndex
+        let previouslySelectedIndexPath = self.indexPath(forAssetIndex: previouslySelectedAssetIndex)
+        currentlySelectedIndex = tappedAssetIndex
         let previouslySelectedItemIdentifier = selectedItems.first(where: { $0.index == currentlySelectedIndex })?.assetIdentifier
 
         var shouldChangeAsset = true
@@ -203,16 +245,16 @@ extension YPLibraryVC: UICollectionViewDelegate {
         v.refreshImageCurtainAlpha()
             
         if isMultipleSelectionEnabled {
-            let cellIsInTheSelectionPool = isInSelectionPool(indexPath: indexPath)
-            let cellIsCurrentlySelected = previouslySelectedIndexPath.row == currentlySelectedIndex
+            let cellIsInTheSelectionPool = isInSelectionPool(assetIndex: tappedAssetIndex)
+            let cellIsCurrentlySelected = previouslySelectedAssetIndex == currentlySelectedIndex
             if cellIsInTheSelectionPool {
                 if cellIsCurrentlySelected && !disableAutomaticCellSelection {
                     shouldChangeAsset = false
-                    deselect(indexPath: indexPath)
+                    deselect(assetIndex: tappedAssetIndex)
                 }
             } else if isLimitExceeded == false {
                 shouldChangeAsset = false
-                addToSelection(indexPath: indexPath)
+                addToSelection(assetIndex: tappedAssetIndex)
             }
             if (cellIsCurrentlySelected && !cellIsInTheSelectionPool) || !cellIsCurrentlySelected || disableAutomaticCellSelection {
                 disableAutomaticCellSelection = false
@@ -222,7 +264,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
             collectionView.reloadItems(at: [indexPath, previouslySelectedIndexPath])
         } else if previouslySelectedIndexPath != indexPath {
             selectedItems.removeAll()
-            addToSelection(indexPath: indexPath)
+            addToSelection(assetIndex: tappedAssetIndex)
             shouldChangeAsset = false
 
             // Force deseletion of previously selected cell.
@@ -233,15 +275,15 @@ extension YPLibraryVC: UICollectionViewDelegate {
                 previousCell.isSelected = false
             }
             collectionView.reloadItems(at: [indexPath, previouslySelectedIndexPath])
-        } else if previouslySelectedIndexPath == indexPath, let currentItemIdentifier = mediaManager.getAsset(at: indexPath.row)?.localIdentifier, currentItemIdentifier != previouslySelectedItemIdentifier {
+        } else if previouslySelectedIndexPath == indexPath, let currentItemIdentifier = mediaManager.getAsset(at: tappedAssetIndex)?.localIdentifier, currentItemIdentifier != previouslySelectedItemIdentifier {
             // If we clicked on the cell index that was already selected, but the identifier is different, let's re-select the cell
             selectedItems.removeAll()
-            addToSelection(indexPath: indexPath)
+            addToSelection(assetIndex: tappedAssetIndex)
             shouldChangeAsset = true
             collectionView.reloadItems(at: [indexPath])
         }
         if shouldChangeAsset {
-            changeAsset(mediaManager.getAsset(at: indexPath.row))
+            changeAsset(mediaManager.getAsset(at: tappedAssetIndex))
         }
         disableAutomaticCellSelection = false
     }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		096C86752EB1BB5000D89CC9 /* YPCameraButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096C86742EB1BB4E00D89CC9 /* YPCameraButtonCell.swift */; };
+		096C86762EB1BB5000D89CC9 /* YPCameraButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096C86742EB1BB4E00D89CC9 /* YPCameraButtonCell.swift */; };
 		321E6D87240CFABC00D76CD8 /* UINavigationBar+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321E6D86240CFABC00D76CD8 /* UINavigationBar+Extensions.swift */; };
 		327D7B592409510300B9C368 /* YPFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327D7B582409510300B9C368 /* YPFonts.swift */; };
 		327D7B69240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327D7B68240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift */; };
@@ -222,6 +224,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		096C86742EB1BB4E00D89CC9 /* YPCameraButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPCameraButtonCell.swift; sourceTree = "<group>"; };
 		16550C5C214D5EE60090BADF /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		166695DE253EFF0100F6EF9E /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		2577138123B1E09300BB9C86 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
@@ -493,6 +496,7 @@
 				99C6D6A01F1FB5C100711DB2 /* YPLibraryView.swift */,
 				99C6D6A11F1FB5C100711DB2 /* YPLibraryView.xib */,
 				99C6D6A21F1FB5C100711DB2 /* YPLibraryViewCell.swift */,
+				096C86742EB1BB4E00D89CC9 /* YPCameraButtonCell.swift */,
 				990FD292201B3D69002A39A1 /* YPLibraryViewDelegate.swift */,
 			);
 			path = Gallery;
@@ -902,6 +906,7 @@
 				EBA37AFF26F7302B005DAAD4 /* YPLog.swift in Sources */,
 				EBD66105208104EA00EA276E /* YPIcons.swift in Sources */,
 				EB473E1F208E1BCC00D16105 /* AVMutableComposition+Extensions.swift in Sources */,
+				096C86752EB1BB5000D89CC9 /* YPCameraButtonCell.swift in Sources */,
 				99472DED2056E33700419F9E /* YPWordings.swift in Sources */,
 				EBA37B0326F7304E005DAAD4 /* YPPhotoCaptureHelper.swift in Sources */,
 				99C6D6BC1F1FB5C100711DB2 /* YPLibraryView.swift in Sources */,
@@ -974,6 +979,7 @@
 				EBA37B9826F74CBA005DAAD4 /* YPVideoProcessor.swift in Sources */,
 				EBA37B8526F74CBA005DAAD4 /* YPLibraryVC.swift in Sources */,
 				EBA37B9E26F74CBA005DAAD4 /* YPDragDirection.swift in Sources */,
+				096C86762EB1BB5000D89CC9 /* YPCameraButtonCell.swift in Sources */,
 				EBDDF0EB278784A900A372FD /* Array+Extensions.swift in Sources */,
 				EBA37B5226F749C6005DAAD4 /* AppDelegate.swift in Sources */,
 				EBA37BB126F74CBA005DAAD4 /* YPLoaders.swift in Sources */,
