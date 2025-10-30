@@ -34,7 +34,7 @@ open class YPImagePicker: UINavigationController {
     /// Get a YPImagePicker with the specified configuration.
     public required init(configuration: YPImagePickerConfiguration) {
         YPImagePickerConfiguration.shared = configuration
-        YPImagePickerConfiguration.shared.library.cameraButtonCellConfiguration.showGalleryCameraButton = true
+        YPImagePickerConfiguration.shared.library.showGalleryCameraButton = true
         picker = YPPickerVC()
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen // Force .fullScreen as iOS 13 now shows modals as cards by default.

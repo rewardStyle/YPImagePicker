@@ -21,7 +21,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal let panGestureHelper = PanGestureHelper()
     internal var isInitialized = false
     var disableAutomaticCellSelection = false
-    private var shouldShowGalleryCameraButton = YPConfig.library.cameraButtonCellConfiguration.showGalleryCameraButton
+    private var shouldShowGalleryCameraButton = YPConfig.library.showGalleryCameraButton
 
     public var isAnimating: Bool {
         v.assetZoomableView.isAnimating
@@ -249,11 +249,11 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
         //Force hiding the gallery camera button if multiple selection is enabled
         if isMultipleSelectionEnabled {
-            YPImagePickerConfiguration.shared.library.cameraButtonCellConfiguration.showGalleryCameraButton = false
+            YPImagePickerConfiguration.shared.library.showGalleryCameraButton = false
         } else {
-            YPImagePickerConfiguration.shared.library.cameraButtonCellConfiguration.showGalleryCameraButton = shouldShowGalleryCameraButton
+            YPImagePickerConfiguration.shared.library.showGalleryCameraButton = shouldShowGalleryCameraButton
         }
-        
+
         v.collectionView.reloadData()
         checkLimit()
         delegate?.libraryViewDidToggleMultipleSelection(enabled: isMultipleSelectionEnabled)

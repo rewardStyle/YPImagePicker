@@ -393,7 +393,6 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 }
 
 extension YPPickerVC: YPLibraryViewDelegate {
-
     public func libraryViewDidTapNext() {
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
@@ -446,5 +445,13 @@ extension YPPickerVC: YPLibraryViewDelegate {
         if let index = YPConfig.screens.firstIndex(of: .video) {
             showPage(index)
         }
+    }
+
+    open func registerViewForCameraButtonCell(_ collectionView: UICollectionView) {
+        collectionView.register(YPCameraButtonCell.self, forCellWithReuseIdentifier: "YPCameraButtonCell")
+    }
+    
+    open func viewForCameraButtonCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
+        return collectionView.dequeueReusableCell(withReuseIdentifier: "YPCameraButtonCell", for: indexPath) as! YPCameraButtonCell
     }
 }

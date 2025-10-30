@@ -254,8 +254,8 @@ public struct YPConfigLibrary {
     /// Anything superior than 1 will enable the multiple selection feature.
     public var maxNumberOfItems = 1
 
-    /// Configures the open camera button cell
-    public var cameraButtonCellConfiguration = YPCameraButtonCellConfiguration()
+    /// Displays the gallery camera button cell
+    public var showGalleryCameraButton = false
 
     /// Show warning when user has selected `maxNumberOfItems` and multiple selection is enabled.
     public var showMaxNumberWarning = true
@@ -295,25 +295,6 @@ public struct YPConfigLibrary {
 
     /// Customize UI for bulk uploads flow.
     public var isBulkUploading: Bool = false
-}
-
-/// Encapsulates camera buttton settings
-public struct YPCameraButtonCellConfiguration {
-
-    /// Display open camera button in gallery at index 0
-    public var showGalleryCameraButton: Bool = false
-
-    /// The background color to apply to the camera button cell
-    public var cameraButtonBackgroundColor: UIColor = .black
-
-    /// The background color to apply to the camera button icon
-    public var cameraButtonIconBackgroundColor: UIColor = .darkGray
-
-    /// The image displayed in the center of the camera button
-    public var cameraButtonImage: UIImage? = UIImage(systemName: "camera")
-
-    /// The tint color to apply to the cameraButtonImage
-    public var cameraButtonImageTintColor: UIColor = .white
 }
 
 /// Encapsulates video specific settings.

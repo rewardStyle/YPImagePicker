@@ -17,6 +17,7 @@ final class YPCameraButtonCell: UICollectionViewCell {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
+        view.backgroundColor = .darkGray
         return view
     }()
 
@@ -39,6 +40,7 @@ final class YPCameraButtonCell: UICollectionViewCell {
     private func setupView() {
         contentView.addSubview(iconBackgroundView)
         contentView.addSubview(iconView)
+        contentView.backgroundColor = .black
 
         iconBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -57,15 +59,8 @@ final class YPCameraButtonCell: UICollectionViewCell {
         ])
 
         iconView.contentMode = .scaleAspectFit
-    }
-
-    // MARK: - Configuration
-
-    func configure(with cameraButtonConfiguration: YPCameraButtonCellConfiguration) {
-        contentView.backgroundColor = cameraButtonConfiguration.cameraButtonBackgroundColor
-        iconBackgroundView.backgroundColor = cameraButtonConfiguration.cameraButtonIconBackgroundColor
-        iconView.image = cameraButtonConfiguration.cameraButtonImage?.withRenderingMode(.alwaysTemplate)
-        iconView.tintColor = cameraButtonConfiguration.cameraButtonImageTintColor
+        iconView.tintColor = .white
+        iconView.image = UIImage(systemName: "camera")
     }
 
     private func forceDarkAppearance() {

@@ -176,7 +176,7 @@ open class LibraryMediaManager {
                 ypLog("Some problems in fetching and caching assets.")
                 return
             }
-            let showCameraButton = YPConfig.library.cameraButtonCellConfiguration.showGalleryCameraButton
+            let showCameraButton = YPConfig.library.showGalleryCameraButton
 
             let assetsToStartCaching = ypAssetsAtIndexPaths(
                 addedIndexPaths,

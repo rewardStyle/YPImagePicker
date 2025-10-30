@@ -30,14 +30,14 @@ extension YPLibraryVC {
     }
 
     private var showGalleryCameraButton: Bool {
-        YPConfig.library.cameraButtonCellConfiguration.showGalleryCameraButton
+        YPConfig.library.showGalleryCameraButton
     }
 
     public func setupCollectionView() {
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
         v.collectionView.register(YPLibraryViewCell.self, forCellWithReuseIdentifier: "YPLibraryViewCell")
-        v.collectionView.register(YPCameraButtonCell.self, forCellWithReuseIdentifier: "YPCameraButtonCell")
+        delegate?.registerViewForCameraButtonCell(v.collectionView)
         // Long press on cell to enable multiple selection
         let longPressGR = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(longPressGR:)))
         longPressGR.minimumPressDuration = 0.5
@@ -152,10 +152,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if showGalleryCameraButton && indexPath.item == 0 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "YPCameraButtonCell", for: indexPath) as! YPCameraButtonCell
-            cell.configure(with: YPConfig.library.cameraButtonCellConfiguration)
-            return cell
+        if showGalleryCameraButton && indexPath.item == 0, let delegate {
+            return delegate.viewForCameraButtonCell(collectionView, indexPath: indexPath)
         }
 
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "YPLibraryViewCell", for: indexPath) as? YPLibraryViewCell else {
