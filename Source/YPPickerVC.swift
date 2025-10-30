@@ -420,7 +420,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
         }
     }
     
-    public func libraryViewDidToggleMultipleSelection(enabled: Bool) {
+    open func libraryViewDidToggleMultipleSelection(enabled: Bool) {
         v.layoutIfNeeded()
         updateUI()
         didTapMultipleSelection?(enabled)
