@@ -20,13 +20,13 @@ func ypAssetsAtIndexPaths(
     var assets: [PHAsset] = []
     assets.reserveCapacity(indexPaths.count)
 
-    for ip in indexPaths {
-        var assetIndex = ip.item
+    for indexPath in indexPaths {
+        var assetIndex = indexPath.item
 
         // If camera button is included as index 0, skip it and offset
         if includeCameraButton {
-            guard ip.item > 0 else { continue }
-            assetIndex = ip.item - 1
+            guard indexPath.item > 0 else { continue }
+            assetIndex -= 1
         }
 
         guard assetIndex >= 0 && assetIndex < fetchResult.count else { continue }
