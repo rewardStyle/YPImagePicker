@@ -37,7 +37,9 @@ extension YPLibraryVC {
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
         v.collectionView.register(YPLibraryViewCell.self, forCellWithReuseIdentifier: "YPLibraryViewCell")
-        delegate?.registerViewForCameraButtonCell(v.collectionView)
+        if showGalleryCameraButton {
+            delegate?.registerViewForCameraButtonCell(v.collectionView)
+        }
         // Long press on cell to enable multiple selection
         let longPressGR = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(longPressGR:)))
         longPressGR.minimumPressDuration = 0.5
