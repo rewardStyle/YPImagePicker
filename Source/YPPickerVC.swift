@@ -386,10 +386,13 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         videoVC?.stopCamera()
         cameraVC?.stopCamera()
     }
+
+    open func thumbnailForVideo(_ path: URL) -> UIImage {
+        thumbnailFromVideoPath(path)
+    }
 }
 
 extension YPPickerVC: YPLibraryViewDelegate {
-    
     public func libraryViewDidTapNext() {
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
@@ -416,7 +419,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
         }
     }
     
-    public func libraryViewDidToggleMultipleSelection(enabled: Bool) {
+    open func libraryViewDidToggleMultipleSelection(enabled: Bool) {
         v.layoutIfNeeded()
         updateUI()
         didTapMultipleSelection?(enabled)
@@ -436,5 +439,19 @@ extension YPPickerVC: YPLibraryViewDelegate {
 
     public func libraryViewDidTapAlbum() {
         navBarTapped()
+    }
+
+    open func libraryViewDidTapCameraButtonCell() {
+        if let index = YPConfig.screens.firstIndex(of: .video) {
+            showPage(index)
+        }
+    }
+
+    open func registerViewForCameraButtonCell(_ collectionView: UICollectionView) {
+        collectionView.register(YPCameraButtonCell.self, forCellWithReuseIdentifier: "YPCameraButtonCell")
+    }
+    
+    open func viewForCameraButtonCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
+        return collectionView.dequeueReusableCell(withReuseIdentifier: "YPCameraButtonCell", for: indexPath) as! YPCameraButtonCell
     }
 }

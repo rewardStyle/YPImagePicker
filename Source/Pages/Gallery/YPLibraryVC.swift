@@ -21,6 +21,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal let panGestureHelper = PanGestureHelper()
     internal var isInitialized = false
     var disableAutomaticCellSelection = false
+    private var shouldShowGalleryCameraButton = YPConfig.library.showGalleryCameraButton
 
     public var isAnimating: Bool {
         v.assetZoomableView.isAnimating
@@ -235,16 +236,24 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     currentlySelectedIndex = index
                     changeAsset(image)
                 }
-                addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
+                addToSelection(assetIndex: currentlySelectedIndex)
             }
         } else {
             selectedItems.removeAll()
-            addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
+            addToSelection(assetIndex: currentlySelectedIndex)
         }
         
         v.assetViewContainer.setMultipleSelectionMode(on: isMultipleSelectionEnabled)
         let image = isMultipleSelectionEnabled ? YPConfig.icons.multipleSelectionOnIcon : YPConfig.icons.multipleSelectionOffIcon
         v.multipleSelectionButton.setImage(image, for: .normal)
+
+        //Force hiding the gallery camera button if multiple selection is enabled
+        if isMultipleSelectionEnabled {
+            YPImagePickerConfiguration.shared.library.showGalleryCameraButton = false
+        } else {
+            YPImagePickerConfiguration.shared.library.showGalleryCameraButton = shouldShowGalleryCameraButton
+        }
+
         v.collectionView.reloadData()
         checkLimit()
         delegate?.libraryViewDidToggleMultipleSelection(enabled: isMultipleSelectionEnabled)
@@ -266,7 +275,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
     
-    func refreshMediaRequest() {
+    public func refreshMediaRequest() {
         let options = buildPHFetchOptions()
 
         if
@@ -296,7 +305,7 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             v.collectionView.reloadData()
 
             if !isMultipleSelectionEnabled && YPConfig.library.preSelectItemOnMultipleSelection {
-                addToSelection(indexPath: IndexPath(row: 0, section: 0))
+                addToSelection(assetIndex: 0)
             }
         } else {
             delegate?.libraryViewHaveNoItems()

@@ -16,7 +16,7 @@ internal final class YPLibraryView: UIView {
 
     // MARK: - Public vars
 
-    internal let assetZoomableViewMinimalVisibleHeight: CGFloat  = 50
+    internal let assetZoomableViewMinimalVisibleHeight: CGFloat  = 0
     internal var assetViewContainerConstraintTop: NSLayoutConstraint?
     internal let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -243,7 +243,7 @@ internal final class YPLibraryView: UIView {
     func refreshImageCurtainAlpha() {
         let imageCurtainAlpha = abs(assetViewContainerConstraintTop?.constant ?? 0)
         / (assetViewContainer.frame.height - assetZoomableViewMinimalVisibleHeight)
-        assetViewContainer.curtain.alpha = imageCurtainAlpha
+        assetViewContainer.curtain.alpha = assetZoomableViewMinimalVisibleHeight > 0 ? imageCurtainAlpha : 0
     }
 
     func cellSize() -> CGSize {

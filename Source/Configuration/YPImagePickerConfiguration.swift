@@ -254,6 +254,9 @@ public struct YPConfigLibrary {
     /// Anything superior than 1 will enable the multiple selection feature.
     public var maxNumberOfItems = 1
 
+    /// Displays the gallery camera button cell
+    public var showGalleryCameraButton = false
+
     /// Show warning when user has selected `maxNumberOfItems` and multiple selection is enabled.
     public var showMaxNumberWarning = true
 

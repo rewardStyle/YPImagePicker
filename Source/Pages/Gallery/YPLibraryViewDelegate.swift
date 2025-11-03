@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 @objc
 public protocol YPLibraryViewDelegate: AnyObject {
@@ -18,4 +19,7 @@ public protocol YPLibraryViewDelegate: AnyObject {
     func libraryViewHaveNoItems()
     func libraryViewDidTapAlbum()
     func libraryViewDidTapSecondaryButton()
+    func libraryViewDidTapCameraButtonCell()
+    func registerViewForCameraButtonCell(_ collectionView: UICollectionView)
+    func viewForCameraButtonCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell
 }

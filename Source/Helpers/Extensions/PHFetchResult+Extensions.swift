@@ -9,15 +9,29 @@
 import Foundation
 import Photos
 
-internal extension PHFetchResult where ObjectType == PHAsset {
-    func assetsAtIndexPaths(_ indexPaths: [IndexPath]) -> [PHAsset] {
-        if indexPaths.count == 0 { return [] }
-        var assets: [PHAsset] = []
-        assets.reserveCapacity(indexPaths.count)
-        for indexPath in indexPaths {
-            let asset = self[indexPath.item]
-            assets.append(asset)
+@inline(__always)
+func ypAssetsAtIndexPaths(
+    _ indexPaths: [IndexPath],
+    in fetchResult: PHFetchResult<PHAsset>,
+    includeCameraButton: Bool
+) -> [PHAsset] {
+    guard !indexPaths.isEmpty else { return [] }
+
+    var assets: [PHAsset] = []
+    assets.reserveCapacity(indexPaths.count)
+
+    for indexPath in indexPaths {
+        var assetIndex = indexPath.item
+
+        // If camera button is included as index 0, skip it and offset
+        if includeCameraButton {
+            guard indexPath.item > 0 else { continue }
+            assetIndex -= 1
         }
-        return assets
+
+        guard assetIndex >= 0 && assetIndex < fetchResult.count else { continue }
+        assets.append(fetchResult.object(at: assetIndex))
     }
+
+    return assets
 }
