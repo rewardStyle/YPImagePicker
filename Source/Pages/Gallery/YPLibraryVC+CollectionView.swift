@@ -54,10 +54,10 @@ extension YPLibraryVC {
         
         if longPressGR.state == .began {
             let point = longPressGR.location(in: v.collectionView)
-            guard let indexPath = v.collectionView.indexPathForItem(at: point) else {
+            guard let indexPath = v.collectionView.indexPathForItem(at: point), let assetIndex = assetIndex(for: indexPath) else {
                 return
             }
-            startMultipleSelection(at: indexPath)
+            startMultipleSelection(at: IndexPath(item: assetIndex, section: indexPath.section))
         }
     }
     
