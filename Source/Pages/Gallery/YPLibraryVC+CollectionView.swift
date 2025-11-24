@@ -77,7 +77,6 @@ extension YPLibraryVC {
             v.collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
         }
         v.refreshImageCurtainAlpha()
-        v.collectionView.reloadItems(at: [indexPath])
     }
     
     // MARK: - Library collection view cell managing
