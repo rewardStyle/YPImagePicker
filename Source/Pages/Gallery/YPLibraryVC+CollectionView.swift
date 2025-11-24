@@ -65,6 +65,7 @@ extension YPLibraryVC {
         guard let assetIndex = assetIndex(for: indexPath) else { return }
 
         currentlySelectedIndex = assetIndex
+        selectedItems.removeAll()
         toggleMultipleSelection()
         
         // Update preview.
@@ -76,6 +77,7 @@ extension YPLibraryVC {
             v.collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
         }
         v.refreshImageCurtainAlpha()
+        v.collectionView.reloadItems(at: [indexPath])
     }
     
     // MARK: - Library collection view cell managing
