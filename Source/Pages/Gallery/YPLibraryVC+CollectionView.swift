@@ -65,6 +65,7 @@ extension YPLibraryVC {
         guard let assetIndex = assetIndex(for: indexPath) else { return }
 
         currentlySelectedIndex = assetIndex
+        selectedItems.removeAll()
         toggleMultipleSelection()
         
         // Update preview.
