@@ -287,7 +287,15 @@ internal final class YPLibraryView: UIView {
             }
             showAlbumsButton.Bottom == line.Top
             showAlbumsButton.height(60)
-            showAlbumsButton.Bottom == collectionView.Top
+
+            if let selectionGalleryHeaderView = YPConfig.library.selectionGalleryHeaderView {
+                subviews(selectionGalleryHeaderView)
+                selectionGalleryHeaderView.fillHorizontally()
+                showAlbumsButton.Bottom == selectionGalleryHeaderView.Top
+                selectionGalleryHeaderView.Bottom == collectionView.Top
+            } else {
+                showAlbumsButton.Bottom == collectionView.Top
+            }
         } else {
             assetViewContainer.Bottom == line.Top
             line.Bottom == collectionView.Top
@@ -296,7 +304,14 @@ internal final class YPLibraryView: UIView {
         line.height(1)
         line.fillHorizontally()
 
-        assetViewContainer.top(0).fillHorizontally()
+        if let assetPreviewHeaderView = YPConfig.library.assetPreviewHeaderView {
+            subviews(assetPreviewHeaderView)
+            assetPreviewHeaderView.top(0).fillHorizontally()
+            assetPreviewHeaderView.Bottom == assetViewContainer.Top
+            assetViewContainer.fillHorizontally()
+        } else {
+            assetViewContainer.top(0).fillHorizontally()
+        }
 
         if YPConfig.library.isBulkUploading {
             // Hide Asset Preview during bulk uploads
