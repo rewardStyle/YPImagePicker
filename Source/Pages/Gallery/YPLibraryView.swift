@@ -307,7 +307,7 @@ internal final class YPLibraryView: UIView {
         if let assetPreviewHeaderView = YPConfig.library.assetPreviewHeaderView {
             subviews(assetPreviewHeaderView)
             assetPreviewHeaderView.top(0).fillHorizontally()
-            assetPreviewHeaderView.Bottom == assetViewContainer.Top
+            assetViewContainer.Top == assetPreviewHeaderView.Bottom
             assetViewContainer.fillHorizontally()
         } else {
             assetViewContainer.top(0).fillHorizontally()
