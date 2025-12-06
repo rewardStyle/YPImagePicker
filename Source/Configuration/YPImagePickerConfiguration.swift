@@ -285,6 +285,10 @@ public struct YPConfigLibrary {
     /// Allow selection of both photo and video from the photo gallery.
     public var allowPhotoAndVideoSelection : Bool = false
 
+    /// A view you set here will be shown above the asset preview view in the library screen.
+    /// The view will be automatically laid out to fill the screen horizontally, but it should determine its own height.
+    public var assetPreviewHeaderView: UIView?
+
     /// A view you set here will be shown underneath the asset preview view in the library screen.
     /// The view will be automatically laid out to fill the screen horizontally, but it should determine its own height.
     public var assetPreviewFooterView: UIView?
@@ -292,6 +296,10 @@ public struct YPConfigLibrary {
     /// Set this value if you want to restrict the maximum height of the asset preview view
     /// If not set, the asset preview will be a square.
     public var assetPreviewMaxHeight: CGFloat?
+
+    /// A view you set here will be shown above the selection gallery view in the library screen.
+    /// The view will be automatically laid out to fill the screen horizontally, but it should determine its own height.
+    public var selectionGalleryHeaderView: UIView?
 
     /// Customize UI for bulk uploads flow.
     public var isBulkUploading: Bool = false
