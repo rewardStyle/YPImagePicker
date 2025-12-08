@@ -267,7 +267,6 @@ internal final class YPLibraryView: UIView {
             assetViewContainer.subviews(
                 assetZoomableView
             ),
-            progressView,
             maxNumberWarningView.subviews(
                 maxNumberWarningLabel
             )
@@ -285,9 +284,18 @@ internal final class YPLibraryView: UIView {
             } else {
                 assetViewContainer.Bottom == showAlbumsButton.Top
             }
-            showAlbumsButton.Bottom == line.Top
             showAlbumsButton.height(60)
-            showAlbumsButton.Bottom == collectionView.Top
+
+            if let selectionGalleryHeaderView = YPConfig.library.selectionGalleryHeaderView {
+                subviews(selectionGalleryHeaderView)
+                selectionGalleryHeaderView.fillHorizontally()
+                showAlbumsButton.Bottom == selectionGalleryHeaderView.Top
+                selectionGalleryHeaderView.Bottom == line.Top
+                selectionGalleryHeaderView.Bottom == collectionView.Top
+            } else {
+                showAlbumsButton.Bottom == line.Top
+                showAlbumsButton.Bottom == collectionView.Top
+            }
         } else {
             assetViewContainer.Bottom == line.Top
             line.Bottom == collectionView.Top
@@ -296,7 +304,14 @@ internal final class YPLibraryView: UIView {
         line.height(1)
         line.fillHorizontally()
 
-        assetViewContainer.top(0).fillHorizontally()
+        if let assetPreviewHeaderView = YPConfig.library.assetPreviewHeaderView {
+            subviews(assetPreviewHeaderView)
+            assetPreviewHeaderView.top(0).fillHorizontally()
+            assetViewContainer.Top == assetPreviewHeaderView.Bottom
+            assetViewContainer.fillHorizontally()
+        } else {
+            assetViewContainer.top(0).fillHorizontally()
+        }
 
         if YPConfig.library.isBulkUploading {
             // Hide Asset Preview during bulk uploads
@@ -323,6 +338,7 @@ internal final class YPLibraryView: UIView {
 
         assetViewContainer.sendSubviewToBack(assetZoomableView)
 
+        subviews(progressView)
         progressView.height(5).fillHorizontally()
         progressView.Bottom == line.Top
 
