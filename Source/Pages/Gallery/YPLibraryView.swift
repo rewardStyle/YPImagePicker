@@ -285,15 +285,16 @@ internal final class YPLibraryView: UIView {
             } else {
                 assetViewContainer.Bottom == showAlbumsButton.Top
             }
-            showAlbumsButton.Bottom == line.Top
             showAlbumsButton.height(60)
 
             if let selectionGalleryHeaderView = YPConfig.library.selectionGalleryHeaderView {
                 subviews(selectionGalleryHeaderView)
                 selectionGalleryHeaderView.fillHorizontally()
                 showAlbumsButton.Bottom == selectionGalleryHeaderView.Top
+                selectionGalleryHeaderView.Bottom == line.Top
                 selectionGalleryHeaderView.Bottom == collectionView.Top
             } else {
+                showAlbumsButton.Bottom == line.Top
                 showAlbumsButton.Bottom == collectionView.Top
             }
         } else {
