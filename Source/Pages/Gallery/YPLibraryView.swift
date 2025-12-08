@@ -267,7 +267,6 @@ internal final class YPLibraryView: UIView {
             assetViewContainer.subviews(
                 assetZoomableView
             ),
-            progressView,
             maxNumberWarningView.subviews(
                 maxNumberWarningLabel
             )
@@ -339,6 +338,7 @@ internal final class YPLibraryView: UIView {
 
         assetViewContainer.sendSubviewToBack(assetZoomableView)
 
+        subviews(progressView)
         progressView.height(5).fillHorizontally()
         progressView.Bottom == line.Top
 
