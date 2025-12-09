@@ -328,8 +328,12 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         if scrollView == v.collectionView {
             mediaManager.updateCachedAssets(in: self.v.collectionView)
         }
+        delegate?.libraryViewDidScroll()
     }
-    
+
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        delegate?.libraryViewWillBeginScrolling()
+    }
 
     func changeAsset(_ asset: PHAsset?) {
         guard let asset = asset else {

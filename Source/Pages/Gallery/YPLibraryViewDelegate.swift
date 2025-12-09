@@ -22,4 +22,6 @@ public protocol YPLibraryViewDelegate: AnyObject {
     func libraryViewDidTapCameraButtonCell()
     func registerViewForCameraButtonCell(_ collectionView: UICollectionView)
     func viewForCameraButtonCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell
+    func libraryViewWillBeginScrolling()
+    func libraryViewDidScroll()
 }

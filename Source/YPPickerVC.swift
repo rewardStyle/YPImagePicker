@@ -393,6 +393,10 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 }
 
 extension YPPickerVC: YPLibraryViewDelegate {
+    open func libraryViewWillBeginScrolling() {}
+
+    open func libraryViewDidScroll() {}
+
     public func libraryViewDidTapNext() {
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
