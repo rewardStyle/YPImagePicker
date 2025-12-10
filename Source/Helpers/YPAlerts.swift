@@ -24,8 +24,12 @@ struct YPAlert {
             popoverController.permittedArrowDirections = []
         }
         alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: UIAlertAction.Style.default, handler: nil))
-        alert.overrideUserInterfaceStyle = .dark
-        alert.view.tintColor = .systemBlue
+        if let alertInterfaceStyle = YPConfig.alertInterfaceStyle {
+            alert.overrideUserInterfaceStyle = alertInterfaceStyle
+        }
+        if let alertTintColor = YPConfig.colors.alertTintColor {
+            alert.view.tintColor = alertTintColor
+        }
         return alert
     }
     
@@ -44,8 +48,12 @@ struct YPAlert {
             popoverController.permittedArrowDirections = []
         }
         alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: UIAlertAction.Style.default, handler: nil))
-        alert.overrideUserInterfaceStyle = .dark
-        alert.view.tintColor = .systemBlue
+        if let alertInterfaceStyle = YPConfig.alertInterfaceStyle {
+            alert.overrideUserInterfaceStyle = alertInterfaceStyle
+        }
+        if let alertTintColor = YPConfig.colors.alertTintColor {
+            alert.view.tintColor = alertTintColor
+        }
         return alert
     }
 }

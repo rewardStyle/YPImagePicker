@@ -30,8 +30,12 @@ internal struct YPPermissionDeniedPopup {
                                 UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
                             }
                           }))
-        alert.overrideUserInterfaceStyle = .dark
-        alert.view.tintColor = .systemBlue
+        if let alertInterfaceStyle = YPConfig.alertInterfaceStyle {
+            alert.overrideUserInterfaceStyle = alertInterfaceStyle
+        }
+        if let alertTintColor = YPConfig.colors.alertTintColor {
+            alert.view.tintColor = alertTintColor
+        }
         return alert
     }
 }

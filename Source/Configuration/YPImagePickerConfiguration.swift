@@ -53,6 +53,9 @@ public struct YPImagePickerConfiguration {
     /// Use this property to modify the default fonts provided
     public var fonts = YPFonts()
 
+    /// Use this property to modify the default interface style used for alerts.
+    public var alertInterfaceStyle: UIUserInterfaceStyle? = nil
+
     /// Scroll to change modes, defaults to true
     public var isScrollToChangeModesEnabled = true
 
