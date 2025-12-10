@@ -31,6 +31,7 @@ internal struct YPPermissionDeniedPopup {
                             }
                           }))
         alert.overrideUserInterfaceStyle = .dark
+        alert.view.tintColor = .systemBlue
         return alert
     }
 }

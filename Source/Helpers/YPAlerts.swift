@@ -25,6 +25,7 @@ struct YPAlert {
         }
         alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: UIAlertAction.Style.default, handler: nil))
         alert.overrideUserInterfaceStyle = .dark
+        alert.view.tintColor = .systemBlue
         return alert
     }
     
@@ -44,6 +45,7 @@ struct YPAlert {
         }
         alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: UIAlertAction.Style.default, handler: nil))
         alert.overrideUserInterfaceStyle = .dark
+        alert.view.tintColor = .systemBlue
         return alert
     }
 }
