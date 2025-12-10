@@ -17,7 +17,10 @@ public struct YPColors {
     
     /// The common tint color which is used for done buttons in navigation bar, multiple items selection and so on.
     public var tintColor = UIColor.ypSystemBlue
-    
+
+    /// The common tint color which is used for buttons in alerts.
+    public var alertTintColor: UIColor?
+
     /// A color for navigation bar spinner.
     /// Default is nil, which is default iOS gray UIActivityIndicator.
     public var navigationBarActivityIndicatorColor: UIColor?
@@ -37,6 +40,10 @@ public struct YPColors {
     /// A color for circle border for selected items in multiple selection
     /// Default is nil, which takes clear color.
     public var multipleItemsSelectedCircleBorderColor: UIColor?
+
+    /// A color for text for selected items in multiple selection
+    /// Default is nil, which takes white color.
+    public var multipleSelectionIndicatorTextColor: UIColor?
 
     /// The background color of the bottom of photo and video screens.
     public var photoVideoScreenBackgroundColor: UIColor = .offWhiteOrBlack

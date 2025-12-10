@@ -30,6 +30,7 @@ internal struct YPPermissionDeniedPopup {
                                 UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
                             }
                           }))
+        YPAlert.applyYPConfigAlertStyling(to: alert)
         return alert
     }
 }
