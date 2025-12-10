@@ -24,6 +24,7 @@ struct YPAlert {
             popoverController.permittedArrowDirections = []
         }
         alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: UIAlertAction.Style.default, handler: nil))
+        alert.overrideUserInterfaceStyle = .dark
         return alert
     }
     
@@ -42,6 +43,7 @@ struct YPAlert {
             popoverController.permittedArrowDirections = []
         }
         alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: UIAlertAction.Style.default, handler: nil))
+        alert.overrideUserInterfaceStyle = .dark
         return alert
     }
 }
