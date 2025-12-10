@@ -45,7 +45,7 @@ class YPMultipleSelectionIndicator: UIView {
             circle.size(size)
             label.fillContainer()
             label.textAlignment = .center
-            label.textColor = .white
+            label.textColor = YPConfig.colors.multipleSelectionIndicatorTextColor ?? .white
             label.font = YPConfig.fonts.multipleSelectionIndicatorFont
         }
 

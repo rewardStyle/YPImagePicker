@@ -41,6 +41,10 @@ public struct YPColors {
     /// Default is nil, which takes clear color.
     public var multipleItemsSelectedCircleBorderColor: UIColor?
 
+    /// A color for text for selected items in multiple selection
+    /// Default is nil, which takes white color.
+    public var multipleSelectionIndicatorTextColor: UIColor?
+
     /// The background color of the bottom of photo and video screens.
     public var photoVideoScreenBackgroundColor: UIColor = .offWhiteOrBlack
 
