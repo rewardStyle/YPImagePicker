@@ -33,7 +33,7 @@ class YPMultipleSelectionIndicator: UIView {
             circle.size(size)
             imageView.fillContainer(padding: 3)
             imageView.size(size)
-            imageView.image = YPConfig.icons.checkIcon
+            imageView.image = YPConfig.icons.checkIcon.withTintColor(YPConfig.colors.multipleSelectionIndicatorTextColor ?? .white, renderingMode: .alwaysOriginal)
             imageView.contentMode = .scaleAspectFit
             imageView.clipsToBounds = true
         } else {
@@ -99,10 +99,11 @@ class YPLibraryViewCell: UICollectionViewCell {
             durationLabel-5-|,
             5
         )
-        
+
+        let indicatorPadding = YPConfig.gallery.multipleSelectionIndicatorPadding
         layout(
-            3,
-            YPConfig.library.isBulkUploading ? |-3-multipleSelectionIndicator : multipleSelectionIndicator-3-|
+            indicatorPadding,
+            multipleSelectionIndicator-indicatorPadding-|
         )
         
         imageView.contentMode = .scaleAspectFill
@@ -110,23 +111,25 @@ class YPLibraryViewCell: UICollectionViewCell {
         durationLabel.textColor = .white
         durationLabel.font = YPConfig.fonts.durationFont
         durationLabel.isHidden = true
-        selectionOverlay.backgroundColor = .white
-        selectionOverlay.alpha = 0
+        selectionOverlay.backgroundColor = YPConfig.colors.currentSelectedItemOverlayColor ?? .white.withAlphaComponent(0.4)
+        selectionOverlay.isHidden = true
         backgroundColor = .ypSecondarySystemBackground
         setAccessibilityInfo()
     }
 
-    override var isUserInteractionEnabled: Bool {
-        didSet { refreshSelection() }
-    }
-
-    private func refreshSelection() {
-        selectionOverlay.backgroundColor = isUserInteractionEnabled ? .white : .black
-        if isUserInteractionEnabled {
-            let showOverlay = isSelected || isHighlighted
-            selectionOverlay.alpha = showOverlay ? 0.4 : 0
+    func setSelection(number: Int?) {
+        multipleSelectionIndicator.set(number: number)
+        if number == nil {
+            selectionOverlay.isHidden = true
         } else {
-            selectionOverlay.alpha = 0.4
+            if !isUserInteractionEnabled {
+                selectionOverlay.backgroundColor = .black.withAlphaComponent(0.4)
+            } else if isSelected || isHighlighted {
+                selectionOverlay.backgroundColor = YPConfig.colors.currentSelectedItemOverlayColor ?? .white.withAlphaComponent(0.4)
+            } else {
+                selectionOverlay.backgroundColor = YPConfig.colors.multipleSelectedItemsOverlayColor
+            }
+            selectionOverlay.isHidden = false
         }
     }
 
