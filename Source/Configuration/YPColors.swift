@@ -24,7 +24,15 @@ public struct YPColors {
     /// A color for navigation bar spinner.
     /// Default is nil, which is default iOS gray UIActivityIndicator.
     public var navigationBarActivityIndicatorColor: UIColor?
-    
+
+    /// A color for the overlay of the selected item currently being previewed.
+    /// Default is nil, which takes white color at 40% opacity.
+    public var currentSelectedItemOverlayColor: UIColor?
+
+    /// A color for the overlay of items selected but not being previewed.
+    /// Default is nil.
+    public var multipleSelectedItemsOverlayColor: UIColor?
+
     /// A color for circle for unselected items in multiple selection
     /// Default is nil, which takes white.withAlphaComponent(0.3) color.
     public var multipleItemsUnselectedCircleColor: UIColor?

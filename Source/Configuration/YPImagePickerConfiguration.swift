@@ -390,6 +390,10 @@ public struct YPConfigVideo {
 public struct YPConfigSelectionsGallery {
     /// Defines if the remove button should be hidden when showing the gallery. Default is true.
     public var hidesRemoveButton = true
+
+    /// Determines the padding between the multiple selection indicator and the edges of the asset cell.
+    /// Defaults to 3.
+    public var multipleSelectionIndicatorPadding: CGFloat = 3
 }
 
 public enum YPItemOverlayType {
