@@ -10,7 +10,7 @@ import UIKit
 import Stevia
 import Photos
 
-protocol YPPickerVCDelegate: AnyObject {
+public protocol YPPickerVCDelegate: AnyObject {
     func libraryHasNoItems()
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool
 }
@@ -26,7 +26,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     let albumsManager = YPAlbumsManager()
     var shouldHideStatusBar = false
     var initialStatusBarHidden = false
-    weak var pickerVCDelegate: YPPickerVCDelegate?
+    public weak var pickerVCDelegate: YPPickerVCDelegate?
     
     override open var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
