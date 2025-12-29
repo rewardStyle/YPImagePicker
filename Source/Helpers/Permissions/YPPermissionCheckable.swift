@@ -9,18 +9,19 @@
 import UIKit
 
 internal protocol YPPermissionCheckable {
-    func doAfterLibraryPermissionCheck(block: @escaping () -> Void)
+    func doAfterLibraryPermissionCheck(block: @escaping () -> Void, permissionDeniedBlock: (() -> Void)?)
     func doAfterCameraPermissionCheck(block: @escaping () -> Void)
     func checkLibraryPermission()
     func checkCameraPermission()
 }
 
 internal extension YPPermissionCheckable where Self: UIViewController {
-    func doAfterLibraryPermissionCheck(block: @escaping () -> Void) {
+    func doAfterLibraryPermissionCheck(block: @escaping () -> Void, permissionDeniedBlock: (() -> Void)? = nil) {
         YPPermissionManager.checkLibraryPermissionAndAskIfNeeded(sourceVC: self) { hasPermission in
             if hasPermission {
                 block()
             } else {
+                permissionDeniedBlock?()
                 ypLog("Not enough permissions.")
             }
         }

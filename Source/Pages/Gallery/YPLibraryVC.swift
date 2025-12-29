@@ -299,12 +299,17 @@ public final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 addToSelection(assetIndex: 0)
             }
         } else {
-            delegate?.libraryViewHaveNoItems()
+            libraryViewHaveNoItems()
         }
 
         scrollToTop()
     }
-    
+
+    func libraryViewHaveNoItems() {
+        v.hideLoader()
+        delegate?.libraryViewHaveNoItems()
+    }
+
     func buildPHFetchOptions() -> PHFetchOptions {
         // Sorting condition
         if let userOpt = YPConfig.library.options {
