@@ -187,11 +187,11 @@ open class YPImagePicker: UINavigationController {
 }
 
 extension YPImagePicker: YPPickerVCDelegate {
-    func libraryHasNoItems() {
+    public func libraryHasNoItems() {
         self.imagePickerDelegate?.imagePickerHasNoItemsInLibrary(self)
     }
     
-    func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
+    public func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return self.imagePickerDelegate?.shouldAddToSelection(indexPath: indexPath, numSelections: numSelections)
             ?? true
     }
