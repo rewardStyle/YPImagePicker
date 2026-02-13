@@ -23,29 +23,57 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
 
         DispatchQueue.main.async {
             let collectionView = self.v.collectionView
-            self.mediaManager.fetchResult = collectionChanges.fetchResultAfterChanges
+
+            // Guard against updates when the view isn't in the hierarchy
+            guard collectionView.window != nil else {
+                self.mediaManager.fetchResult = collectionChanges.fetchResultAfterChanges
+                collectionView.reloadData()
+                self.updateAssetSelection()
+                self.mediaManager.resetCachedAssets()
+                return
+            }
+
             if !collectionChanges.hasIncrementalChanges || collectionChanges.hasMoves {
+                self.mediaManager.fetchResult = collectionChanges.fetchResultAfterChanges
                 collectionView.reloadData()
             } else {
+                // Validate that the current data source count matches what PHChange expects
+                // before attempting incremental updates
+                let expectedOldCount = collectionChanges.fetchResultBeforeChanges.count
+                let cameraButtonOffset = YPConfig.library.showGalleryCameraButton ? 1 : 0
+                let actualOldCount = collectionView.numberOfItems(inSection: 0) - cameraButtonOffset
+
+                guard expectedOldCount == actualOldCount else {
+                    ypLog("Data source count mismatch (expected: \(expectedOldCount), actual: \(actualOldCount)). Falling back to reloadData.")
+                    self.mediaManager.fetchResult = collectionChanges.fetchResultAfterChanges
+                    collectionView.reloadData()
+                    self.updateAssetSelection()
+                    self.mediaManager.resetCachedAssets()
+                    return
+                }
+
                 collectionView.performBatchUpdates({
+                    // Update fetchResult inside performBatchUpdates so that
+                    // UICollectionView sees the old count at the start and the
+                    // new count at the end, matching the applied deletes/inserts.
+                    self.mediaManager.fetchResult = collectionChanges.fetchResultAfterChanges
+
                     if let removedIndexes = collectionChanges.removedIndexes,
                        removedIndexes.count != 0 {
-                        collectionView.deleteItems(at: removedIndexes.aapl_indexPathsFromIndexesWithSection(0))
+                        collectionView.deleteItems(at: removedIndexes.aapl_indexPathsFromIndexesWithSection(0, offset: cameraButtonOffset))
                     }
 
                     if let insertedIndexes = collectionChanges.insertedIndexes, insertedIndexes.count != 0 {
-                        collectionView.insertItems(at: insertedIndexes.aapl_indexPathsFromIndexesWithSection(0))
+                        collectionView.insertItems(at: insertedIndexes.aapl_indexPathsFromIndexesWithSection(0, offset: cameraButtonOffset))
                     }
                 }, completion: { finished in
                     guard finished else { return }
                     guard let changedIndexes = collectionChanges.changedIndexes,
                           changedIndexes.count != 0 else {
-                        ypLog("No changes detected")
-                        collectionView.reloadData() // If we failed to detect changes, we'll reload everything just in case
                         return
                     }
 
-                    collectionView.reloadItems(at: changedIndexes.aapl_indexPathsFromIndexesWithSection(0))
+                    collectionView.reloadItems(at: changedIndexes.aapl_indexPathsFromIndexesWithSection(0, offset: cameraButtonOffset))
                 })
             }
 
